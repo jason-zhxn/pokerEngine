@@ -19,10 +19,10 @@ install: dependencies cppinstall
 dependencies:
 	python -m pip install --upgrade pip
 	python -m pip install conan ninja
-	conan profile detect
+	@if [ ! -f ~/.conan2/profiles/default ]; then conan profile detect; fi
 
 cppinstall:
-	conan install . --build=missing --output-folder=build
+	conan install . --build=missing
 
 # Run all tests
 test: build cpptest
@@ -41,7 +41,7 @@ lint: cpplint
 # Lint C++ code with Clang-Tidy
 cpplint: build
 	run-clang-tidy -p build
-	find $(CPP_SRC) -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
 
 # Format C++ code
 cppformat:

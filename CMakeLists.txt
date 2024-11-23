@@ -3,26 +3,30 @@ cmake_minimum_required(VERSION 3.20)
 # Project setup
 project(poker_engine LANGUAGES CXX)
 
-# Enable compile commands for tools like clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Set C++ Standard
+# Set C++ Standard and enable Conan toolchain
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include Conan-generated toolchain
-include(${CMAKE_BINARY_DIR}/Release/generators/conan_toolchain.cmake)
+# Include Conan-generated toolchain file
+include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 
+# Find GTest and other dependencies
+find_package(GTest REQUIRED)
+find_package(pybind11 REQUIRED)
+
+# Source and include files
+file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE HEADERS src/*.hpp src/*.h)
+
+# Add executable
+add_executable(poker_engine ${SOURCES} ${HEADERS})
+
+# Link dependencies
+target_link_libraries(poker_engine PRIVATE GTest::gtest GTest::gtest_main pybind11::pybind11)
 # Add include directories
-include_directories(src/cards src/game)
+target_include_directories(poker_engine PRIVATE src src/cards src/game src/players)
 
-# Add main executable
-add_executable(poker_engine
-    src/main.cpp
-    src/cards/Card.cpp
-    src/game/HandEvaluation.cpp
-)
-
-# Link libraries
-target_link_libraries(poker_engine PRIVATE GTest::gtest)
+# Enable testing
+enable_testing()
+add_test(NAME poker_engine_tests COMMAND poker_engine)
 

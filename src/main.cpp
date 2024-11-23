@@ -1,24 +1,28 @@
-#include "cards/Card.h"
-#include "game/HandEvaluation.h"
+#include "Card.h"
+#include "HandEvaluator.h"
 #include <iostream>
 
 int main()
 {
-    // Create some sample cards
-    Card card1("Ace", "Hearts");
-    Card card2("10", "Spades");
+    Card card1("10", "Hearts");
+    Card card2("J", "Hearts");
+    Card card3("Q", "Hearts");
+    Card card4("K", "Hearts");
+    Card card5("A", "Hearts");
 
-    // Print card information
-    std::cout << "Card 1: " << card1.toString() << std::endl;
-    std::cout << "Card 2: " << card2.toString() << std::endl;
+    HandEvaluator evaluator;
 
-    // Example usage of HandEvaluation (placeholder)
-    HandEvaluation evaluator;
-    // Assume evaluateHand() is a method in HandEvaluation to evaluate cards
-    std::string result = evaluator.evaluateHand({ card1, card2 });
+    try {
+        HandEvaluator::HandResult result = evaluator.evaluateHand({ card1, card2, card3, card4, card5 });
 
-    // Print hand evaluation result
-    std::cout << "Hand Evaluation Result: " << result << std::endl;
+        // Print the result
+        std::cout << "Hand rank: " << result.rank << std::endl;
+        std::cout << "High cards: ";
+        for (int highCard : result.highCards) { std::cout << highCard << " "; }
+        std::cout << std::endl;
+    } catch (const std::invalid_argument &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 
     return 0;
 }
