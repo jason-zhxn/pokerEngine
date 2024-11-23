@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "poker-engine"
+version = "0.1.0"
+description = "Poker engine project"
+authors = ["Harry Guan <guanhuai2014@gmail.com"]
+
+[tool.poetry.dependencies]
+python = "^3.12"  # Python required for Conan
+

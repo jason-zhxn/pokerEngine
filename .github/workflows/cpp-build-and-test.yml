@@ -1,0 +1,30 @@
+name: C++ Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+
+    - name: Install Dependencies
+      run: make install
+
+    - name: Build Project
+      run: make build
+
+    - name: Run Tests
+      run: make test
+
