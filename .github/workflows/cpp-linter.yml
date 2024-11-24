@@ -14,15 +14,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-        - name: Install Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: 3.12
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
 
-        - name: Install Conan (no need for build?) 
-          run: make cppinstall
+    - name: Install Conan (no need for build?) 
+      run: make cppinstall
 
-        - name: Run Linters
-          run: |
-            make lint
-            make format
+    - name: Run Linters
+      run: |
+        make lint
+        make format
