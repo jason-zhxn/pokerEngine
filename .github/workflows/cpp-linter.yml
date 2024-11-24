@@ -19,9 +19,6 @@ jobs:
       with:
         python-version: 3.12
 
-    - name: Install Conan (no need for build?) 
-      run: make cppinstall
-
     - name: Run Linters
       run: |
         make lint
