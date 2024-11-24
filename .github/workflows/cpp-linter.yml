@@ -19,9 +19,7 @@ jobs:
       with:
         python-version: 3.12
 
-    - name: Install Dependencies
-      run: make install
-
-    - name: Run Linters
-      run: make lint
-
+    - name: Build and Run C++ Linters
+      run: |
+        make lint
+        make format

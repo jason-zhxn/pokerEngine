@@ -1,9 +1,9 @@
-.PHONY: build install cppinstall test cpptest clean lint cpplint cppformat dependencies
+.PHONY: build cppinstall test cpptest clean lint cpplint cppformat format
 
 RELEASE_TYPE = Release
 CPP_SRC = src/cppsrc
 
-# Default build target
+# Build C++ project
 build: cppinstall
 	mkdir -p build
 	cd build && cmake .. \
@@ -13,37 +13,41 @@ build: cppinstall
 		-G Ninja
 	cd build && cmake --build .
 
-# Install dependencies
-install: dependencies cppinstall
-
-dependencies:
-	python -m pip install --upgrade pip
-	python -m pip install conan ninja
-	@if [ ! -f ~/.conan2/profiles/default ]; then conan profile detect; fi
-
+# Install Conan
 cppinstall:
+	pip install --upgrade pip
+	pipx install --force conan
+	@if [ ! -f ~/.conan2/profiles/default ]; then \
+		conan profile detect; \
+	else \
+		echo "Conan default profile already exists, skipping profile detection."; \
+	fi
+	pipx install --force ninja
 	conan install . --build=missing
 
-# Run all tests
-test: build cpptest
-
-# Run C++ tests
-cpptest: build
-	@cd build && ctest --output-on-failure
-
-# Clean build directory
+# Clean build
 clean:
 	@rm -rf build
 
-# Linting
+# Run all tests
+test: cpptest
+
+# C++ testing
+cpptest: build
+	@cd build && ctest --output-on-failure
+
+# Run all linting
 lint: cpplint
 
-# Lint C++ code with Clang-Tidy
+# C++ linting
 cpplint: build
 	run-clang-tidy -p build
 	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
 
-# Format C++ code
-cppformat:
-	find $(CPP_SRC) -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
+# Run all formatting
+format: cppformat
 
+# C++ formatting
+cppformat:
+	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
+	run-clang-tidy -fix -j $(shell nproc) -p build
