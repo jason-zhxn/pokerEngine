@@ -1,33 +1,32 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(intern LANGUAGES CXX)
+# Project setup
+project(poker_engine LANGUAGES CXX)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+# Set C++ Standard and enable Conan toolchain
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Python3 3.12 COMPONENTS Interpreter Development EXACT REQUIRED)
+# Include Conan-generated toolchain file
+include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+
+# Find GTest and other dependencies
+find_package(GTest REQUIRED)
 find_package(pybind11 REQUIRED)
 
-find_package(GTest REQUIRED)
+# Source and include files
+file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE HEADERS src/*.hpp src/*.h)
+
+# Add executable
+add_executable(poker_engine ${SOURCES} ${HEADERS})
+
+# Link dependencies
+target_link_libraries(poker_engine PRIVATE GTest::gtest GTest::gtest_main pybind11::pybind11)
+# Add include directories
+target_include_directories(poker_engine PRIVATE src src/cards src/game src/players)
+
+# Enable testing
 enable_testing()
+add_test(NAME poker_engine_tests COMMAND poker_engine)
 
-file(GLOB INTERN_PROJECT_MAIN src/cppsrc/main.cpp)
-file(GLOB_RECURSE INTERN_PROJECT_HEADERS src/cppsrc/*.hpp)
-file(GLOB_RECURSE INTERN_PROJECT_TESTS src/cppsrc/test/*.cpp)
-
-add_executable(intern_project ${INTERN_PROJECT_MAIN} ${INTERN_PROJECT_HEADERS})
-
-add_executable(intern_tests ${INTERN_PROJECT_TESTS} ${INTERN_PROJECT_HEADERS})
-target_include_directories(intern_tests PUBLIC src)
-
-target_link_libraries(intern_project PRIVATE Python3::Python)
-target_link_libraries(intern_project PRIVATE pybind11::pybind11)
-target_link_libraries(intern_project PRIVATE ${Python3_LIBRARIES})
-
-target_link_libraries(intern_tests PRIVATE Python3::Python)
-target_link_libraries(intern_tests PRIVATE pybind11::pybind11)
-target_link_libraries(intern_tests PRIVATE ${Python3_LIBRARIES})
-target_link_libraries(intern_tests PRIVATE gtest::gtest)
-
-pybind11_add_module(intern src/cppsrc/main.cpp)
-install(TARGETS intern DESTINATION intern_project)

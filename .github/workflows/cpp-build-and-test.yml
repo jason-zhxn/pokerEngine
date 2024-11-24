@@ -1,27 +1,30 @@
-name: CI - C++ Unit Tests
+name: C++ Build and Test
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-    cpp-unit-tests:
-        runs-on: ubuntu-latest
+  build-and-test:
+    runs-on: ubuntu-latest
 
-        steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.12'
-        
-        - name: Install Dependencies
-          run:
-            make dependencies
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
 
-        - name: Run C++ Tests
-          run: make cpptest
+    - name: Install Dependencies
+      run: make install
+
+    - name: Build Project
+      run: make build
+
+    - name: Run Tests
+      run: make test
+

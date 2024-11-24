@@ -7,7 +7,7 @@ CPP_SRC = src/cppsrc
 build: cppinstall
 	mkdir -p build
 	cd build && cmake .. \
-		-DCMAKE_TOOLCHAIN_FILE=$(RELEASE_TYPE)/generators/conan_toolchain.cmake \
+		-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		-G Ninja
@@ -28,15 +28,18 @@ cppinstall:
 # Run all tests
 test: cpptest
 
+# Run C++ tests
 cpptest: build
-	@cd build && ./intern_tests
+	@cd build && ctest --output-on-failure
 
+# Clean build directory
 clean:
 	@rm -rf build
 
 # Run all linting
 lint: cpplint
 
+# Lint C++ code with Clang-Tidy
 cpplint: build
 	run-clang-tidy -p build
 	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
@@ -48,20 +51,3 @@ format: cppformat
 cppformat:
 	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
 	run-clang-tidy -fix -j $(shell nproc) -p build
-
-
-
-format: cppformat
-
-cppformat: build
-	find $(CPP_SRC) -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
-	run-clang-tidy -fix -j $(shell nproc) -p build
-
-dependencies:
-	# Ensure required tools are installed
-	pip install --upgrade pip
-	pipx install conan
-	conan profile detect
-	bash < .github/scripts/conan-profile.sh
-	pipx install ninja
-
