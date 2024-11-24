@@ -14,16 +14,16 @@ jobs:
         - name: Checkout repository
           uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.12'
-        
-        - name: Install Dependencies
-          run: |
-            make dependencies
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
 
-        - name: Run Clang-Tidy and Clang-Format (Linters)
-          run: |
-            make cpplint
-            make cppformat
+    - name: Install Dependencies
+      run: make install
+
+    - name: Run Linters
+      run: |
+        make lint
+        make format
+
