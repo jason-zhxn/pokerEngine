@@ -3,8 +3,6 @@
 #include "Card.h"
 #include <algorithm>
 #include <map>
-#include <stdexcept>
-#include <string>
 #include <vector>
 
 class HandEvaluator

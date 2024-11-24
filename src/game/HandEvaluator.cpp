@@ -12,7 +12,7 @@ bool HandEvaluator::isFlush(const std::vector<Card> &hand)
     return true;
 }
 
-// Check if the hand is a straight (consecutive ranks)
+// Check if the hand is a straight
 bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
 {
     if (hand.size() < 5) return false;
@@ -24,11 +24,8 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
     std::sort(ranks.begin(), ranks.end());
     ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
 
-    // For Ace-low straight, add Ace as 1 if Ace is present
     bool hasAce = (std::find(ranks.begin(), ranks.end(), 14) != ranks.end());
-    if (hasAce) {
-        ranks.push_back(1);// Consider Ace as low
-    }
+    if (hasAce) { ranks.push_back(1); }
 
     // Sort ranks again
     std::sort(ranks.begin(), ranks.end());
