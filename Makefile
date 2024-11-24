@@ -7,7 +7,7 @@ CPP_SRC = src/cppsrc
 build: cppinstall
 	mkdir -p build
 	cd build && cmake .. \
-		-DCMAKE_TOOLCHAIN_FILE=$(RELEASE_TYPE)/generators/conan_toolchain.cmake \
+		-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		-G Ninja
@@ -34,7 +34,7 @@ test: cpptest
 
 # C++ testing
 cpptest: build
-	@cd build && ./intern_tests
+	@cd build && ctest --output-on-failure
 
 
 # Run all linting

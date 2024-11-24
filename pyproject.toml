@@ -1,34 +1,9 @@
 [tool.poetry]
-name = "intern-project"
+name = "poker-engine"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-readme = "README.md"
-packages = [
-  {include = "pysrc", from = "src"}
-]
-
-[project]
-name = "intern-project"
-version = "0.1.0"
-description = ""
-readme = "README.md"
-packages = [
-  {include = "pysrc", from = "src"}
-]
-
+description = "Poker engine project"
+authors = ["Harry Guan <guanhuai2014@gmail.com"]
 
 [tool.poetry.dependencies]
-python = "^3.12"
-pytest = "^8.3.3"
-mypy = "^1.12.1"
-ruff = "^0.7.0"
+python = "^3.12"  # Python required for Conan
 
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.ruff.lint.per-file-ignores]
-# ignore unused imports since they are helpful for the template
-"*.py" = ["F401"]

@@ -1,18 +1,18 @@
-name: CI - C++ Linting and Formatting
+name: C++ Linters
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-    cpp-lint-and-format:
-        runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-latest
 
-        steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
         - name: Install Python
           uses: actions/setup-python@v5
@@ -26,4 +26,3 @@ jobs:
           run: |
             make lint
             make format
-
