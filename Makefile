@@ -1,7 +1,6 @@
 .PHONY: build cppinstall test cpptest clean lint cpplint cppformat format
 
 RELEASE_TYPE = Release
-CPP_SRC = src/cppsrc
 
 # Build C++ project
 build: cppinstall
@@ -23,7 +22,7 @@ cppinstall:
 		echo "Conan default profile already exists, skipping profile detection."; \
 	fi
 	pipx install --force ninja
-	conan install . --build=missing
+	conan install . --build=missing --output-folder=build
 
 # Clean build
 clean:

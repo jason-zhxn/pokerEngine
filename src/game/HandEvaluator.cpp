@@ -20,21 +20,35 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
     std::vector<int> ranks;
     for (const auto &card : hand) { ranks.push_back(card.getValue()); }
 
+    // Remove duplicates
     std::sort(ranks.begin(), ranks.end());
-    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());// Remove duplicates
+    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
 
-    for (size_t i = 0; i <= ranks.size() - 5; ++i) {
-        if (ranks[i + 4] - ranks[i] == 4) {
-            highCard = ranks[i + 4];
-            return true;
-        }
+    // For Ace-low straight, add Ace as 1 if Ace is present
+    bool hasAce = (std::find(ranks.begin(), ranks.end(), 14) != ranks.end());
+    if (hasAce) {
+        ranks.push_back(1);// Consider Ace as low
     }
 
-    // Special case: Ace-low straight (A, 2, 3, 4, 5)
-    if (std::find(ranks.begin(), ranks.end(), 14) != ranks.end() && ranks[0] == 2 && ranks[1] == 3 && ranks[2] == 4
-        && ranks[3] == 5) {
-        highCard = 5;
-        return true;
+    // Sort ranks again
+    std::sort(ranks.begin(), ranks.end());
+
+    // Ensure there are at least 5 unique ranks to form a straight
+    if (ranks.size() < 5) return false;
+
+    // Now check for straights
+    for (size_t i = 0; i <= ranks.size() - 5; ++i) {
+        bool isSequence = true;
+        for (size_t j = 0; j < 4; ++j) {
+            if (ranks[i + j + 1] - ranks[i + j] != 1) {
+                isSequence = false;
+                break;
+            }
+        }
+        if (isSequence) {
+            highCard = ranks[i + 4] == 1 ? 14 : ranks[i + 4];// Adjust highCard for Ace
+            return true;
+        }
     }
 
     return false;
@@ -55,33 +69,50 @@ HandEvaluator::HandResult
     HandResult result;
 
     if (isStraight && isFlush) {
-        result.rank = (highCard == 14) ? ROYAL_FLUSH : STRAIGHT_FLUSH;
-        result.highCards = { highCard };
-    } else if (rankFrequency.size() == 2) {
-        auto it = rankFrequency.begin();
-        if (it->second == 4 || (++it)->second == 4) {
-            result.rank = FOUR_OF_A_KIND;
+        // For Royal Flush, check if the straight starts at 10 and ends with Ace
+        if (highCard == 14 && rankFrequency.count(10) > 0) {
+            result.rank = ROYAL_FLUSH;
         } else {
-            result.rank = FULL_HOUSE;
+            result.rank = STRAIGHT_FLUSH;
         }
-    } else if (isFlush) {
-        result.rank = FLUSH;
-    } else if (isStraight) {
-        result.rank = STRAIGHT;
         result.highCards = { highCard };
-    } else if (rankFrequency.size() == 3) {
-        if (std::any_of(
-              rankFrequency.begin(), rankFrequency.end(), [](const auto &pair) { return pair.second == 3; })) {
-            result.rank = THREE_OF_A_KIND;
-        } else {
-            result.rank = TWO_PAIR;
-        }
-    } else if (rankFrequency.size() == 4) {
-        result.rank = ONE_PAIR;
     } else {
-        result.rank = HIGH_CARD;
-        for (const auto &[rank, freq] : rankFrequency) { result.highCards.push_back(rank); }
-        std::sort(result.highCards.rbegin(), result.highCards.rend());
+        bool hasFourOfAKind = false;
+        bool hasThreeOfAKind = false;
+        int pairCount = 0;
+
+        for (const auto &pair : rankFrequency) {
+            if (pair.second == 4) {
+                hasFourOfAKind = true;
+            } else if (pair.second == 3) {
+                hasThreeOfAKind = true;
+            } else if (pair.second == 2) {
+                pairCount++;
+            }
+        }
+
+        if (hasFourOfAKind) {
+            result.rank = FOUR_OF_A_KIND;
+        } else if (hasThreeOfAKind && pairCount > 0) {
+            result.rank = FULL_HOUSE;
+        } else if (isFlush) {
+            result.rank = FLUSH;
+        } else if (isStraight) {
+            result.rank = STRAIGHT;
+            result.highCards = { highCard };
+        } else if (hasThreeOfAKind) {
+            result.rank = THREE_OF_A_KIND;
+        } else if (pairCount == 2) {
+            result.rank = TWO_PAIR;
+        } else if (pairCount == 1) {
+            result.rank = ONE_PAIR;
+        } else {
+            result.rank = HIGH_CARD;
+            for (const auto &[rank, freq] : rankFrequency) {
+                for (int i = 0; i < freq; ++i) { result.highCards.push_back(rank); }
+            }
+            std::sort(result.highCards.rbegin(), result.highCards.rend());
+        }
     }
 
     return result;

@@ -1,8 +1,22 @@
+# Caches
 .cache
-CMakeUserPresets.json
-build
 __pycache__
 .pytest_cache
 .ruff_cache
 .mypy_cache
 *.so
+
+# Virtual Env
+venv
+
+# CMake
+CMakeFiles
+
+# Conan-generated files
+conanbuildenv-*.sh
+conanrunenv-*.sh
+deactivate_conan*.sh
+cmakedeps_macros.cmake
+CMakePresets.json
+CMakeUserPresets.json
+build/

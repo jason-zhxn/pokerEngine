@@ -1,10 +1,9 @@
-#ifndef HANDEVALUATOR_H
-#define HANDEVALUATOR_H
+#pragma once
 
 #include "Card.h"
 #include <algorithm>
 #include <map>
-#include <stdexcept>// For std::invalid_argument
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -41,5 +40,3 @@ class HandEvaluator
     static HandResult
       getHighestRank(const std::map<int, int> &rankFrequency, bool isFlush, bool isStraight, int highCard);
 };
-
-#endif
