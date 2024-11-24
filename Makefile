@@ -25,7 +25,7 @@ cppinstall:
 	pipx install --force ninja
 	conan install . --build=missing
 
-# Clean current build
+# Clean build
 clean:
 	@rm -rf build
 
@@ -35,7 +35,6 @@ test: cpptest
 # C++ testing
 cpptest: build
 	@cd build && ctest --output-on-failure
-
 
 # Run all linting
 lint: cpplint
