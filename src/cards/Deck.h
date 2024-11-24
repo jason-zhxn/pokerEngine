@@ -12,4 +12,8 @@ class Deck
     Deck();
     Card popTop();
     void shuffle();
+    int getLength() const;
+
+  private:
+    std::vector<Card> cards;
 };
