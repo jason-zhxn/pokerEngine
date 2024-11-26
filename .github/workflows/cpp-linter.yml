@@ -19,7 +19,6 @@ jobs:
       with:
         python-version: 3.12
 
-    - name: Build and Run C++ Linters
+    - name: Build and Run C++ Linter
       run: |
         make lint
-        make format
