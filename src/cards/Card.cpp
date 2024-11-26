@@ -19,6 +19,7 @@ int Card::getValue() const
     if (rank == "K") return 13;
     if (rank == "Q") return 12;
     if (rank == "J") return 11;
+    if (rank == "T") return 10;
 
     try {
         return std::stoi(rank);

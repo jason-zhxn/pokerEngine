@@ -1,7 +1,6 @@
 #include "HandEvaluator.h"
 #include <gtest/gtest.h>
 
-// Test for a Royal Flush
 TEST(HandEvaluatorTest, RoyalFlush)
 {
     HandEvaluator evaluator;
@@ -11,10 +10,9 @@ TEST(HandEvaluatorTest, RoyalFlush)
 
     auto result = evaluator.evaluateHand(hand);
     EXPECT_EQ(result.rank, HandEvaluator::ROYAL_FLUSH);
-    EXPECT_EQ(result.highCards[0], 14);// Ace is the high card
+    EXPECT_EQ(result.highCards[0], 14);
 }
 
-// Test for a Straight Flush
 TEST(HandEvaluatorTest, StraightFlush)
 {
     HandEvaluator evaluator;
@@ -24,10 +22,9 @@ TEST(HandEvaluatorTest, StraightFlush)
 
     auto result = evaluator.evaluateHand(hand);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT_FLUSH);
-    EXPECT_EQ(result.highCards[0], 13);// King is the high card
+    EXPECT_EQ(result.highCards[0], 13);
 }
 
-// Test for Four of a Kind
 TEST(HandEvaluatorTest, FourOfAKind)
 {
     HandEvaluator evaluator;
@@ -39,7 +36,6 @@ TEST(HandEvaluatorTest, FourOfAKind)
     EXPECT_EQ(result.rank, HandEvaluator::FOUR_OF_A_KIND);
 }
 
-// Test for Full House
 TEST(HandEvaluatorTest, FullHouse)
 {
     HandEvaluator evaluator;
@@ -51,7 +47,6 @@ TEST(HandEvaluatorTest, FullHouse)
     EXPECT_EQ(result.rank, HandEvaluator::FULL_HOUSE);
 }
 
-// Test for Flush
 TEST(HandEvaluatorTest, Flush)
 {
     HandEvaluator evaluator;
@@ -63,7 +58,6 @@ TEST(HandEvaluatorTest, Flush)
     EXPECT_EQ(result.rank, HandEvaluator::FLUSH);
 }
 
-// Test for Straight
 TEST(HandEvaluatorTest, Straight)
 {
     HandEvaluator evaluator;
@@ -73,10 +67,9 @@ TEST(HandEvaluatorTest, Straight)
 
     auto result = evaluator.evaluateHand(hand);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
-    EXPECT_EQ(result.highCards[0], 6);// 6 is the high card
+    EXPECT_EQ(result.highCards[0], 6);
 }
 
-// Test Three of a Kind
 TEST(HandEvaluatorTest, ThreeOfAKind)
 {
     HandEvaluator evaluator;
@@ -88,7 +81,6 @@ TEST(HandEvaluatorTest, ThreeOfAKind)
     EXPECT_EQ(result.rank, HandEvaluator::THREE_OF_A_KIND);
 }
 
-// Test Two Pair
 TEST(HandEvaluatorTest, TwoPair)
 {
     HandEvaluator evaluator;
@@ -100,7 +92,6 @@ TEST(HandEvaluatorTest, TwoPair)
     EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
 }
 
-// Test One Pair
 TEST(HandEvaluatorTest, OnePair)
 {
     HandEvaluator evaluator;
@@ -112,7 +103,6 @@ TEST(HandEvaluatorTest, OnePair)
     EXPECT_EQ(result.rank, HandEvaluator::ONE_PAIR);
 }
 
-// Test High Card
 TEST(HandEvaluatorTest, HighCard)
 {
     HandEvaluator evaluator;
@@ -122,5 +112,5 @@ TEST(HandEvaluatorTest, HighCard)
 
     auto result = evaluator.evaluateHand(hand);
     EXPECT_EQ(result.rank, HandEvaluator::HIGH_CARD);
-    EXPECT_EQ(result.highCards[0], 11);// Jack is the high card
+    EXPECT_EQ(result.highCards[0], 11);
 }

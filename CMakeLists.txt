@@ -27,7 +27,7 @@ set_target_properties(poker_engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_B
 
 # Add test executable
 file(GLOB_RECURSE TEST_SOURCES tests/*.cpp)  # Assuming tests are in a separate `tests/` directory
-file(GLOB_RECURSE IMPLEMENTATION_SOURCES src/cards/*.cpp src/game/*.cpp)  # Include source files for tests
+file(GLOB_RECURSE IMPLEMENTATION_SOURCES src/cards/*.cpp src/game/*.cpp src/players/*.cpp)  # Include source files for tests
 
 if(TEST_SOURCES)
     add_executable(poker_engine_tests ${TEST_SOURCES} ${IMPLEMENTATION_SOURCES})

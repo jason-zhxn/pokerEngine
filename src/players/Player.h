@@ -11,19 +11,19 @@ class Player
 
     int getChips() const;
     bool isActive() const;
+    std::vector<Card> getHand() const;
+    std::string getName() const;
 
     void addChips(int amount);
     void deductChips(int amount);
     void fold();
-    void resetForNextRound();
+    void reset();
     void setHand(const std::vector<Card> &newHand);
-
-    void displayStatus() const;
 
   private:
     std::string name;
     bool bot;
     int chips;
     bool active;
-    std::vector<std::Card> hand;
+    std::vector<Card> hand;
 };
