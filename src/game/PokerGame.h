@@ -1,15 +1,30 @@
-pragma #once
+#pragma once
 
-#include <Deck.h>
-#include <HandEvaluator.h>
+#include "Deck.h"
+#include "Player.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-  class PokerGame
+class PokerGame
 {
-    // Need: constructor, playGame()
-    // folds will be through the actual actions of the gameplaying agents (but it should invoke removePlayer() from this
-    // class) has to have totalchips getters and setters (setter can just be increments since you cant take chips from
-    // the pot) has to have ascii art for each turn (maybe clear if possible)
-    //
-
   public:
-}
+    PokerGame(int initialChips, int numPlayers);
+
+    void playGame();
+
+  private:
+    void dealCards();
+    void executeBettingRound();
+    void handlePlayerDecision(Player &player, int currentBet, int &pot, int &playerBet);
+    void determineWinner();
+    void resetGameState();
+
+    void displayAsciiArt(const std::string &message) const;
+    void clearConsole() const;
+
+    std::unique_ptr<Deck> deck;
+    std::vector<std::unique_ptr<Player>> players;
+    int pot;
+    int currentBet;
+};
