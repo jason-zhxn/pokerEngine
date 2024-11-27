@@ -2,29 +2,46 @@
 
 #include "Deck.h"
 #include "Player.h"
+#include "HandEvaluator.h"
 #include <memory>
 #include <string>
 #include <vector>
 
 class PokerGame
 {
-  public:
-    PokerGame(int initialChips, int numPlayers);
+public:
+    // Constructor
+    PokerGame();
 
+    // Game Loop
     void playGame();
 
-  private:
-    void dealCards();
+private:
+    // Game Stages
+    void preflop();
+    void flop();
+    void turn();
+    void river();
+
+    // Betting
     void executeBettingRound();
     void handlePlayerDecision(Player &player, int currentBet, int &pot, int &playerBet);
-    void determineWinner();
+
+    // Game Utilities
+    void dealHoleCards();
+    void dealCommunityCards(int numCards);
+    Player& determineWinner();
+    void payout(Player &player);
     void resetGameState();
 
+    // Display
     void displayAsciiArt(const std::string &message) const;
     void clearConsole() const;
 
+    // Members
     std::unique_ptr<Deck> deck;
     std::vector<std::unique_ptr<Player>> players;
+    std::vector<Card> communityCards;
     int pot;
     int currentBet;
 };
