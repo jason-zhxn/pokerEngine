@@ -1,6 +1,7 @@
 #include "Deck.h"
 #include <algorithm>
 #include <random>
+#include <string>
 #include <chrono>
 
 // Constructor: Initialize the deck with all cards
@@ -10,7 +11,7 @@ Deck::Deck()
     const std::vector<std::string> ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
     for (const auto &suit : suits) {
         for (const auto &rank : ranks) {
-            cards.emplace_back(Card(rank, suit)); // Add all cards to the deck
+            cards.emplace_back(Card(rank, suit)); // add all cards to the deck
         }
     }
     activeSize = cards.size(); // activeSize as a pointer to ignore "dealt" cards

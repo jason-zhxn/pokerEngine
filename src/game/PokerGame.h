@@ -30,12 +30,10 @@ private:
     // Game Utilities
     void dealHoleCards();
     void dealCommunityCards(int numCards);
-    Player& determineWinner();
-    void payout(Player &player);
+    void payout();
     void resetGameState();
 
-    // Display
-    void displayAsciiArt(const std::string &message) const;
+    // Display Utils
     void clearConsole() const;
 
     // Members
@@ -44,4 +42,5 @@ private:
     std::vector<Card> communityCards;
     int pot;
     int currentBet;
+    int dealerIndex;
 };

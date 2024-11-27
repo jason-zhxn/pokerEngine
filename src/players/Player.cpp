@@ -24,6 +24,11 @@ std::vector<Card> Player::getHand() const
     return hand;
 }
 
+int Player::getCurrentBet() const
+{
+    return currentBet;
+}
+
 // Modifiers
 void Player::addChips(int amount)
 {
@@ -49,4 +54,9 @@ void Player::reset()
 void Player::setHand(const std::vector<Card> &newHand)
 {
     hand = newHand;
+}
+
+void Player::setCurrentBet(const int &amount)
+{
+    currentBet = amount;
 }

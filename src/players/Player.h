@@ -13,12 +13,14 @@ class Player
     bool isActive() const;
     std::vector<Card> getHand() const;
     std::string getName() const;
+    int getCurrentBet() const;
 
     void addChips(int amount);
     void deductChips(int amount);
     void fold();
     void reset();
     void setHand(const std::vector<Card> &newHand);
+    void setCurrentBet(const int &amount);
 
   private:
     std::string name;
@@ -26,4 +28,5 @@ class Player
     int chips;
     bool active;
     std::vector<Card> hand;
+    int currentBet;
 };

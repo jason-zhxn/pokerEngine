@@ -1,39 +1,44 @@
 #include "HandEvaluator.h"
+#include <algorithm>
+#include <stdexcept>
+#include <iostream>
 
-// Check if the hand is a flush (all cards of the same suit)
-bool HandEvaluator::isFlush(const std::vector<Card> &hand)
-{
-    if (hand.size() < 5) return false;
+// Combine hole cards and community cards
+std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards) {
+    std::vector<Card> fullHand = hand;
+    fullHand.insert(fullHand.end(), communityCards.begin(), communityCards.end());
+    return fullHand;
+}
 
-    std::string suit = hand[0].getSuit();
+// Check if the hand is a flush
+bool HandEvaluator::isFlush(const std::vector<Card> &hand) {
+    std::map<std::string, int> suitCount;
     for (const auto &card : hand) {
-        if (card.getSuit() != suit) { return false; }
+        suitCount[card.getSuit()]++;
+        if (suitCount[card.getSuit()] >= 5) {
+            return true;
+        }
     }
-    return true;
+    return false;
 }
 
 // Check if the hand is a straight
-bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
-{
-    if (hand.size() < 5) return false;
-
+bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard) {
     std::vector<int> ranks;
-    for (const auto &card : hand) { ranks.push_back(card.getValue()); }
+    for (const auto &card : hand) {
+        ranks.push_back(card.getValue());
+    }
 
-    // Remove duplicates
     std::sort(ranks.begin(), ranks.end());
     ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
 
-    bool hasAce = (std::find(ranks.begin(), ranks.end(), 14) != ranks.end());
-    if (hasAce) { ranks.push_back(1); }
-
-    // Sort ranks again
+    // Ace-low straight (A-2-3-4-5)
+    if (std::find(ranks.begin(), ranks.end(), 14) != ranks.end()) {
+        ranks.push_back(1); // Treat Ace as 1
+    }
     std::sort(ranks.begin(), ranks.end());
 
-    // Ensure there are at least 5 unique ranks to form a straight
-    if (ranks.size() < 5) return false;
-
-    // Now check for straights
+    // Check consecutive sequences
     for (size_t i = 0; i <= ranks.size() - 5; ++i) {
         bool isSequence = true;
         for (size_t j = 0; j < 4; ++j) {
@@ -43,87 +48,93 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
             }
         }
         if (isSequence) {
-            highCard = ranks[i + 4] == 1 ? 14 : ranks[i + 4];// Adjust highCard for Ace
+            highCard = ranks[i + 4]; // Highest card in the sequence
             return true;
         }
     }
-
     return false;
 }
 
-// Get a map of rank frequencies
-std::map<int, int> HandEvaluator::getRankFrequency(const std::vector<Card> &hand)
-{
+// Get rank frequencies for the hand
+std::map<int, int> HandEvaluator::getRankFrequency(const std::vector<Card> &hand) {
     std::map<int, int> rankFrequency;
-    for (const auto &card : hand) { rankFrequency[card.getValue()]++; }
+    for (const auto &card : hand) {
+        rankFrequency[card.getValue()]++;
+    }
     return rankFrequency;
 }
 
-// Determine the highest rank in the hand
-HandEvaluator::HandResult
-  HandEvaluator::getHighestRank(const std::map<int, int> &rankFrequency, bool isFlush, bool isStraight, int highCard)
-{
+// Determine the best hand
+HandEvaluator::HandResult HandEvaluator::determineBestHand(
+    const std::map<int, int> &rankFrequency, bool flush, bool straight, int highCard) {
+
     HandResult result;
 
-    if (isStraight && isFlush) {
-        // For Royal Flush, check if the straight starts at 10 and ends with Ace
-        if (highCard == 14 && rankFrequency.count(10) > 0) {
-            result.rank = ROYAL_FLUSH;
-        } else {
-            result.rank = STRAIGHT_FLUSH;
-        }
+    if (flush && straight) {
+        result.rank = (highCard == 14) ? ROYAL_FLUSH : STRAIGHT_FLUSH;
         result.highCards = { highCard };
-    } else {
-        bool hasFourOfAKind = false;
-        bool hasThreeOfAKind = false;
-        int pairCount = 0;
+        return result;
+    }
 
-        for (const auto &pair : rankFrequency) {
-            if (pair.second == 4) {
-                hasFourOfAKind = true;
-            } else if (pair.second == 3) {
-                hasThreeOfAKind = true;
-            } else if (pair.second == 2) {
-                pairCount++;
-            }
+    bool hasFourOfAKind = false;
+    bool hasThreeOfAKind = false;
+    int pairCount = 0;
+
+    for (const auto &[rank, count] : rankFrequency) {
+        if (count == 4) {
+            hasFourOfAKind = true;
+            result.highCards.push_back(rank);
         }
-
-        if (hasFourOfAKind) {
-            result.rank = FOUR_OF_A_KIND;
-        } else if (hasThreeOfAKind && pairCount > 0) {
-            result.rank = FULL_HOUSE;
-        } else if (isFlush) {
-            result.rank = FLUSH;
-        } else if (isStraight) {
-            result.rank = STRAIGHT;
-            result.highCards = { highCard };
-        } else if (hasThreeOfAKind) {
-            result.rank = THREE_OF_A_KIND;
-        } else if (pairCount == 2) {
-            result.rank = TWO_PAIR;
-        } else if (pairCount == 1) {
-            result.rank = ONE_PAIR;
-        } else {
-            result.rank = HIGH_CARD;
-            for (const auto &[rank, freq] : rankFrequency) {
-                for (int i = 0; i < freq; ++i) { result.highCards.push_back(rank); }
-            }
-            std::sort(result.highCards.rbegin(), result.highCards.rend());
+        if (count == 3) {
+            hasThreeOfAKind = true;
+            result.highCards.push_back(rank);
+        }
+        if (count == 2) {
+            pairCount++;
+            result.highCards.push_back(rank);
         }
     }
+
+    if (hasFourOfAKind) {
+        result.rank = FOUR_OF_A_KIND;
+    } else if (hasThreeOfAKind && pairCount > 0) {
+        result.rank = FULL_HOUSE;
+        std::sort(result.highCards.rbegin(), result.highCards.rend());
+    } else if (flush) {
+        result.rank = FLUSH;
+    } else if (straight) {
+        result.rank = STRAIGHT;
+        result.highCards = { highCard };
+    } else if (hasThreeOfAKind) {
+        result.rank = THREE_OF_A_KIND;
+    } else if (pairCount == 2) {
+        result.rank = TWO_PAIR;
+    } else if (pairCount == 1) {
+        result.rank = ONE_PAIR;
+    } else {
+        result.rank = HIGH_CARD;
+    }
+
+    for (const auto &[rank, count] : rankFrequency) {
+        for (int i = 0; i < count; ++i) {
+            result.highCards.push_back(rank);
+        }
+    }
+
+    std::sort(result.highCards.rbegin(), result.highCards.rend());
 
     return result;
 }
 
-// Evaluate the hand
-HandEvaluator::HandResult HandEvaluator::evaluateHand(const std::vector<Card> &hand)
-{
-    if (hand.size() < 5) { throw std::invalid_argument("Hand must have at least 5 cards."); }
+// Evaluate the full hand
+HandEvaluator::HandResult HandEvaluator::evaluateHand(
+    const std::vector<Card> &hand, const std::vector<Card> &communityCards) {
 
-    bool flush = isFlush(hand);
+    std::vector<Card> fullHand = mergeHand(hand, communityCards);
+    bool flush = isFlush(fullHand);
     int highCard = 0;
-    bool straight = isStraight(hand, highCard);
-    auto rankFrequency = getRankFrequency(hand);
+    bool straight = isStraight(fullHand, highCard);
+    auto rankFrequency = getRankFrequency(fullHand);
 
-    return getHighestRank(rankFrequency, flush, straight, highCard);
+    return determineBestHand(rankFrequency, flush, straight, highCard);
 }
