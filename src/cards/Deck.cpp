@@ -1,8 +1,9 @@
 #include "Deck.h"
 #include <algorithm>
-#include <random>
-#include <string>
 #include <chrono>
+#include <random>
+#include <stdexcept>
+#include <string>
 
 // Constructor: Initialize the deck with all cards
 Deck::Deck()
@@ -11,16 +12,16 @@ Deck::Deck()
     const std::vector<std::string> ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
     for (const auto &suit : suits) {
         for (const auto &rank : ranks) {
-            cards.emplace_back(Card(rank, suit)); // add all cards to the deck
+            cards.emplace_back(Card(rank, suit));// add all cards to the deck
         }
     }
-    activeSize = cards.size(); // activeSize as a pointer to ignore "dealt" cards
+    activeSize = cards.size();// activeSize as a pointer to ignore "dealt" cards
 }
 
 // Remove and return the top card from the deck
 Card Deck::popTop()
 {
-    if (isEmpty()) { // this should never happen
+    if (isEmpty()) {// this should never happen
         throw std::out_of_range("No cards left in deck");
     }
     return cards[--activeSize];

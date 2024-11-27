@@ -1,40 +1,39 @@
 #include "HandEvaluator.h"
 #include <algorithm>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 // Combine hole cards and community cards
-std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards) {
+std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards)
+{
     std::vector<Card> fullHand = hand;
     fullHand.insert(fullHand.end(), communityCards.begin(), communityCards.end());
     return fullHand;
 }
 
 // Check if the hand is a flush
-bool HandEvaluator::isFlush(const std::vector<Card> &hand) {
+bool HandEvaluator::isFlush(const std::vector<Card> &hand)
+{
     std::map<std::string, int> suitCount;
     for (const auto &card : hand) {
         suitCount[card.getSuit()]++;
-        if (suitCount[card.getSuit()] >= 5) {
-            return true;
-        }
+        if (suitCount[card.getSuit()] >= 5) { return true; }
     }
     return false;
 }
 
 // Check if the hand is a straight
-bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard) {
+bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
+{
     std::vector<int> ranks;
-    for (const auto &card : hand) {
-        ranks.push_back(card.getValue());
-    }
+    for (const auto &card : hand) { ranks.push_back(card.getValue()); }
 
     std::sort(ranks.begin(), ranks.end());
     ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
 
     // Ace-low straight (A-2-3-4-5)
     if (std::find(ranks.begin(), ranks.end(), 14) != ranks.end()) {
-        ranks.push_back(1); // Treat Ace as 1
+        ranks.push_back(1);// Treat Ace as 1
     }
     std::sort(ranks.begin(), ranks.end());
 
@@ -48,7 +47,7 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard) {
             }
         }
         if (isSequence) {
-            highCard = ranks[i + 4]; // Highest card in the sequence
+            highCard = ranks[i + 4];// Highest card in the sequence
             return true;
         }
     }
@@ -56,17 +55,17 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard) {
 }
 
 // Get rank frequencies for the hand
-std::map<int, int> HandEvaluator::getRankFrequency(const std::vector<Card> &hand) {
+std::map<int, int> HandEvaluator::getRankFrequency(const std::vector<Card> &hand)
+{
     std::map<int, int> rankFrequency;
-    for (const auto &card : hand) {
-        rankFrequency[card.getValue()]++;
-    }
+    for (const auto &card : hand) { rankFrequency[card.getValue()]++; }
     return rankFrequency;
 }
 
 // Determine the best hand
-HandEvaluator::HandResult HandEvaluator::determineBestHand(
-    const std::map<int, int> &rankFrequency, bool flush, bool straight, int highCard) {
+HandEvaluator::HandResult
+  HandEvaluator::determineBestHand(const std::map<int, int> &rankFrequency, bool flush, bool straight, int highCard)
+{
 
     HandResult result;
 
@@ -116,9 +115,7 @@ HandEvaluator::HandResult HandEvaluator::determineBestHand(
     }
 
     for (const auto &[rank, count] : rankFrequency) {
-        for (int i = 0; i < count; ++i) {
-            result.highCards.push_back(rank);
-        }
+        for (int i = 0; i < count; ++i) { result.highCards.push_back(rank); }
     }
 
     std::sort(result.highCards.rbegin(), result.highCards.rend());
@@ -127,8 +124,9 @@ HandEvaluator::HandResult HandEvaluator::determineBestHand(
 }
 
 // Evaluate the full hand
-HandEvaluator::HandResult HandEvaluator::evaluateHand(
-    const std::vector<Card> &hand, const std::vector<Card> &communityCards) {
+HandEvaluator::HandResult HandEvaluator::evaluateHand(const std::vector<Card> &hand,
+  const std::vector<Card> &communityCards)
+{
 
     std::vector<Card> fullHand = mergeHand(hand, communityCards);
     bool flush = isFlush(fullHand);

@@ -1,10 +1,10 @@
 #include "PokerGame.h"
 #include "Deck.h"
-#include "Player.h"
 #include "HandEvaluator.h"
-#include <iostream>
+#include "Player.h"
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
 
 // Constructor
 PokerGame::PokerGame() : pot(0), currentBet(0)
@@ -16,10 +16,9 @@ PokerGame::PokerGame() : pot(0), currentBet(0)
 }
 
 // Game Loop
-void PokerGame::playGame() 
+void PokerGame::playGame()
 {
-    while (true)
-    {
+    while (true) {
         resetGameState();
         dealHoleCards();
         preflop();
@@ -32,8 +31,7 @@ void PokerGame::playGame()
         executeBettingRound();
         payout();
 
-        if (players[0]->getChips() == 0 || players[1]->getChips() == 0)
-        {
+        if (players[0]->getChips() == 0 || players[1]->getChips() == 0) {
             std::cout << "Game over!";
             if (players[0]->getChips() > 0)
                 std::cout << players[0]->getName() << " wins the game!" << std::endl;
@@ -41,29 +39,28 @@ void PokerGame::playGame()
                 std::cout << players[1]->getName() << " wins the game!" << std::endl;
             break;
         }
-
     }
 }
 
 // Game Stages
-void PokerGame::preflop() 
+void PokerGame::preflop()
 {
     std::cout << "=== Preflop ===" << std::endl;
 }
 
-void PokerGame::flop() 
+void PokerGame::flop()
 {
     std::cout << "=== Flop ===" << std::endl;
     dealCommunityCards(3);
 }
 
-void PokerGame::turn() 
+void PokerGame::turn()
 {
     std::cout << "=== Turn ===" << std::endl;
     dealCommunityCards(1);
 }
 
-void PokerGame::river() 
+void PokerGame::river()
 {
     std::cout << "=== River ===" << std::endl;
     dealCommunityCards(1);
@@ -72,9 +69,8 @@ void PokerGame::river()
 // Game Utilities
 void PokerGame::dealHoleCards()
 {
-    for (auto& playerPtr : players)
-    {
-        Player& player = *playerPtr;
+    for (auto &playerPtr : players) {
+        Player &player = *playerPtr;
         std::vector<Card> hole_cards;
         hole_cards.push_back(deck->popTop());
         hole_cards.push_back(deck->popTop());
@@ -89,10 +85,9 @@ void PokerGame::dealHoleCards()
     }
 }
 
-void PokerGame::dealCommunityCards(int numCards) 
+void PokerGame::dealCommunityCards(int numCards)
 {
-    for (int i = 0; i < numCards; i++)
-    {
+    for (int i = 0; i < numCards; i++) {
         Card card = deck->popTop();
         communityCards.push_back(card);
         std::cout << "Community card dealt: " << card.toString() << std::endl;
@@ -103,17 +98,15 @@ void PokerGame::executeBettingRound()
 {
     std::cout << "=== Betting Round ===" << std::endl;
 
-    int activePlayer = (dealerIndex + 1) % players.size(); // Non-dealer acts first
-    int lastToAct = dealerIndex; // Dealer acts last
+    int activePlayer = (dealerIndex + 1) % players.size();// Non-dealer acts first
+    int lastToAct = dealerIndex;// Dealer acts last
     bool bettingComplete = false;
 
     int highestBet = 0;
-    while (!bettingComplete)
-    {
-        Player& player = *players[activePlayer];
+    while (!bettingComplete) {
+        Player &player = *players[activePlayer];
 
-        if (player.isActive())
-        {
+        if (player.isActive()) {
             std::cout << player.getName() << "'s turn. Current bet: " << highestBet
                       << ", your chips: " << player.getChips() << std::endl;
 
@@ -121,59 +114,46 @@ void PokerGame::executeBettingRound()
             std::string action;
             std::cin >> action;
 
-            if (action == "fold")
-            {
+            if (action == "fold") {
                 player.fold();
                 std::cout << player.getName() << " folds." << std::endl;
-            }
-            else if (action == "call")
-            {
+            } else if (action == "call") {
                 int amountToCall = highestBet - player.getCurrentBet();
-                if (amountToCall > player.getChips())
-                {
-                    amountToCall = player.getChips(); // Go all-in if not enough chips
+                if (amountToCall > player.getChips()) {
+                    amountToCall = player.getChips();// Go all-in if not enough chips
                 }
                 player.deductChips(amountToCall);
                 pot += amountToCall;
                 player.setCurrentBet(highestBet);
                 std::cout << player.getName() << " calls with " << amountToCall << " chips." << std::endl;
-            }
-            else if (action == "raise")
-            {
+            } else if (action == "raise") {
                 int raiseAmount;
                 std::cout << "Enter raise amount: ";
                 std::cin >> raiseAmount;
 
                 int totalBet = highestBet + raiseAmount;
-                if (totalBet > player.getChips())
-                {
-                    totalBet = player.getChips(); // Go all-in if not enough chips
+                if (totalBet > player.getChips()) {
+                    totalBet = player.getChips();// Go all-in if not enough chips
                 }
                 highestBet = totalBet;
                 player.deductChips(totalBet - player.getCurrentBet());
                 pot += totalBet - player.getCurrentBet();
                 player.setCurrentBet(totalBet);
                 std::cout << player.getName() << " raises to " << highestBet << " chips." << std::endl;
-            }
-            else
-            {
+            } else {
                 std::cout << "Invalid action. Please try again." << std::endl;
                 continue;
             }
         }
 
         activePlayer = (activePlayer + 1) % players.size();
-        if (activePlayer == lastToAct)
-        {
-            bettingComplete = true; // End the betting round when all players have acted
+        if (activePlayer == lastToAct) {
+            bettingComplete = true;// End the betting round when all players have acted
         }
     }
 
     // Reset current bets for the next round
-    for (auto& playerPtr : players)
-    {
-        playerPtr->setCurrentBet(0);
-    }
+    for (auto &playerPtr : players) { playerPtr->setCurrentBet(0); }
 }
 
 void PokerGame::payout()
@@ -183,18 +163,12 @@ void PokerGame::payout()
     HandEvaluator::HandResult heroResult = evaluator.evaluateHand(players[0]->getHand(), communityCards);
     HandEvaluator::HandResult villainResult = evaluator.evaluateHand(players[1]->getHand(), communityCards);
 
-    std::cout << players[0]->getName() << "'s hand: " << heroResult.rank 
-              << " with high cards: ";
-    for (const auto &card : heroResult.highCards) {
-        std::cout << card << " ";
-    }
+    std::cout << players[0]->getName() << "'s hand: " << heroResult.rank << " with high cards: ";
+    for (const auto &card : heroResult.highCards) { std::cout << card << " "; }
     std::cout << std::endl;
 
-    std::cout << players[1]->getName() << "'s hand: " << villainResult.rank 
-              << " with high cards: ";
-    for (const auto &card : villainResult.highCards) {
-        std::cout << card << " ";
-    }
+    std::cout << players[1]->getName() << "'s hand: " << villainResult.rank << " with high cards: ";
+    for (const auto &card : villainResult.highCards) { std::cout << card << " "; }
     std::cout << std::endl;
 
     if (heroResult.rank > villainResult.rank) {
@@ -229,10 +203,7 @@ void PokerGame::resetGameState()
     currentBet = 0;
     communityCards.clear();
     deck->shuffle();
-    for (auto& playerPtr : players)
-    {
-        playerPtr->reset();
-    }
+    for (auto &playerPtr : players) { playerPtr->reset(); }
     std::cout << "=== Starting a new round ===" << std::endl;
     dealerIndex = (dealerIndex + 1) % players.size();
     std::cout << "Dealer button is now with " << players[dealerIndex]->getName() << std::endl;
