@@ -1,4 +1,5 @@
 #include "Card.h"
+#include <stdexcept>
 
 // Constructor
 Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suit(suit) {}
