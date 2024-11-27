@@ -1,19 +1,19 @@
 #pragma once
 
-#include "Card.h"
-#include <algorithm>
-#include <chrono>
-#include <random>
 #include <vector>
+#include <string>
+#include "Card.h"
 
 class Deck
 {
-  public:
+private:
+    std::vector<Card> cards;
+    size_t activeSize;
+
+public:
     Deck();
     Card popTop();
-    void shuffle();
+    void shuffle(bool includeRemoved = true);
+    bool isEmpty() const;
     int getLength() const;
-
-  private:
-    std::vector<Card> cards;
 };
