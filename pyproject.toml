@@ -2,8 +2,17 @@
 name = "poker-engine"
 version = "0.1.0"
 description = "Poker engine project"
-authors = ["Harry Guan <guanhuai2014@gmail.com"]
+authors = ["Harry Guan <guanhuai2014@gmail.com>"]
+packages = [
+  {include = "pysrc", from = "src"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"  # Python required for Conan
+pytest = "^8.3.3"
+mypy = "^1.13.0"
+ruff = "^0.8.0"
 
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

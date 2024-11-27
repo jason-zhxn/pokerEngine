@@ -1,6 +1,8 @@
-#include "Card.h"
-#include "HandEvaluator.h"
+#include "cards/Card.h"
+#include "game/HandEvaluator.h"
 #include <iostream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 int main()
 {
@@ -25,4 +27,14 @@ int main()
     }
 
     return 0;
+}
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+PYBIND11_MODULE(poker, m)
+{
+    m.def("add", &add, "Adds two numbers");
 }

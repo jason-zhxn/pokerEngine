@@ -1,6 +1,8 @@
-.PHONY: build cppinstall test cpptest clean lint cpplint cppformat format
+.PHONY: build install cppinstall test pytest cpptest clean lint pylint cpplint format pyformat cppformat
 
 RELEASE_TYPE = Release
+PY_SRC = src/pysrc
+CPP_SRC = src/cppsrc
 
 # Build C++ project
 build: cppinstall
@@ -11,6 +13,10 @@ build: cppinstall
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		-G Ninja
 	cd build && cmake --build .
+	@cp -f build/bin/*.so $(PY_SRC)
+
+install:
+	poetry install
 
 # Install Conan
 cppinstall:
@@ -27,16 +33,27 @@ cppinstall:
 # Clean build
 clean:
 	@rm -rf build
+	@rm -f $(PY_SRC)/*.so
 
 # Run all tests
-test: cpptest
+test: install build
+	@poetry run pytest $(PY_SRC)/test/unit
+	@cd build && ctest --output-on-failure
+
+pytest: install build
+	@poetry run pytest $(PY_SRC)/test/unit
 
 # C++ testing
 cpptest: build
 	@cd build && ctest --output-on-failure
 
 # Run all linting
-lint: cpplint
+lint: pylint cpplint
+
+pylint:
+	poetry run mypy $(PY_SRC)
+	poetry run ruff check $(PY_SRC)
+	poetry run ruff format --check $(PY_SRC)
 
 # C++ linting
 cpplint: build
@@ -44,7 +61,11 @@ cpplint: build
 	find src -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
 
 # Run all formatting
-format: cppformat
+format: pyformat cppformat
+
+pyformat:
+	poetry run ruff format $(PY_SRC)
+	poetry run ruff check --fix $(PY_SRC)
 
 # C++ formatting
 cppformat:
