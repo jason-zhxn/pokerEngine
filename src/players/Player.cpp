@@ -1,7 +1,9 @@
 #include "Player.h"
 
 // Constructor
-Player::Player(const std::string &name, int initialChips) : name(name), chips(initialChips), active(true) {}
+Player::Player(const std::string &name, int initialChips, bool bot)
+  : name(name), chips(initialChips), active(true), bot(bot)
+{}
 
 // Getters
 std::string Player::getName() const
@@ -17,6 +19,11 @@ int Player::getChips() const
 bool Player::isActive() const
 {
     return active;
+}
+
+bool Player::isBot() const
+{
+    return bot;
 }
 
 std::vector<Card> Player::getHand() const

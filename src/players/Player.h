@@ -7,13 +7,14 @@
 class Player
 {
   public:
-    Player(const std::string &name, int initialChips);
+    Player(const std::string &name, int initialChips, bool bot);
 
     int getChips() const;
     bool isActive() const;
     std::vector<Card> getHand() const;
     std::string getName() const;
     int getCurrentBet() const;
+    bool isBot() const;
 
     void addChips(int amount);
     void deductChips(int amount);

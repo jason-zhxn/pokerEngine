@@ -11,8 +11,9 @@ PokerGame::PokerGame() : pot(0), currentBet(0)
 {
     // NOTE: this defaults to two players
     deck = std::make_unique<Deck>();
-    players.push_back(std::make_unique<Player>("Hero", 100));
-    players.push_back(std::make_unique<Player>("Villain", 100));
+    deck->shuffle();
+    players.push_back(std::make_unique<Player>("Hero", 100, false));
+    players.push_back(std::make_unique<Player>("Villain", 100, true));
 }
 
 // Game Loop
@@ -80,7 +81,7 @@ void PokerGame::dealHoleCards()
         if (player.getName() == "Hero") {
             std::cout << "Your hole cards: ";
             std::vector<Card> hero_hand = player.getHand();
-            std::cout << hero_hand[0].toString() << hero_hand[1].toString() << std::endl;
+            std::cout << hero_hand[0].toString() << " " << hero_hand[1].toString() << std::endl;
         }
     }
 }
@@ -98,8 +99,8 @@ void PokerGame::executeBettingRound()
 {
     std::cout << "=== Betting Round ===" << std::endl;
 
-    int activePlayer = (dealerIndex + 1) % players.size();// Non-dealer acts first
-    int lastToAct = dealerIndex;// Dealer acts last
+    int activePlayer = (dealerIndex + 1) % players.size();
+    int lastToAct = dealerIndex;
     bool bettingComplete = false;
 
     int highestBet = 0;
@@ -147,9 +148,7 @@ void PokerGame::executeBettingRound()
         }
 
         activePlayer = (activePlayer + 1) % players.size();
-        if (activePlayer == lastToAct) {
-            bettingComplete = true;// End the betting round when all players have acted
-        }
+        if (activePlayer == lastToAct) { bettingComplete = true; }
     }
 
     // Reset current bets for the next round

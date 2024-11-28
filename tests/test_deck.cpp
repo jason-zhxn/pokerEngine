@@ -1,6 +1,5 @@
 #include "Deck.h"
 #include <gtest/gtest.h>
-#include <set>
 
 // Test Deck creation
 TEST(DeckTest, CreateDeck)
