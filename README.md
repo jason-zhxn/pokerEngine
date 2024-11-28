@@ -1,18 +1,12 @@
-# poker-engine
+# poker-solver
+## Contributors: Harry Guan, Max Breslin
 
-Overview
-  The Poker Engine is a comprehensive tool designed for both simulating poker games and analyzing optimal strategies. This project incorporates statistical probability calculations and provides move suggestions to enhance decision-making during gameplay.
+## Overview
+- The Poker Solver program is written in C++ and Python 3.12, and aims to provide meaningful feedback and analysis on actions within Heads-Up Texas No-Limit Hold'em Poker.
+- This project is currently a work in progress - it is currently able to simulate the game but not provide any feedback. 
 
-Features
-  Game Simulation:
-  
-  Supports common poker variants (e.g., Texas Hold'em, Omaha, etc.).
-  Implements realistic game mechanics, including shuffling, betting rounds, and hand evaluations.
-  Statistical Analysis:
-  
-  Calculates probabilities for winning, tying, or losing in different scenarios.
-  Evaluates potential outcomes based on community cards and player hands.
-  Move Suggestions:
-  
-  Recommends optimal moves (e.g., fold, call, raise) based on statistical analysis.
-  Considers factors like pot odds, expected value, and opponent tendencies.
+## Next Steps
+- We will be effectively calculating opponent ranges based on position and bet sizing.
+- We will be simulating and calculate basic poker mathematical concepts such as equity, pot odds, implied odds, and reverse implied odds.
+- We will potentially be experimenting with RL techniques using PyTorch.
+
