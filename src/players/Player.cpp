@@ -1,11 +1,9 @@
 #include "Player.h"
 
-// Constructor
 Player::Player(const std::string &name, int initialChips, bool bot)
   : name(name), chips(initialChips), active(true), bot(bot)
 {}
 
-// Getters
 std::string Player::getName() const
 {
     return name;
@@ -36,7 +34,6 @@ int Player::getCurrentBet() const
     return currentBet;
 }
 
-// Modifiers
 void Player::addChips(int amount)
 {
     chips += amount;

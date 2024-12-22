@@ -1,10 +1,8 @@
 #include "Card.h"
 #include <stdexcept>
 
-// Constructor
 Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suit(suit) {}
 
-// Getters
 std::string Card::getRank() const
 {
     return rank;
@@ -34,13 +32,11 @@ std::string Card::toString() const
     return rank + " of " + suit;
 }
 
-// Equality operator
 bool Card::operator==(const Card &other) const
 {
     return rank == other.rank && suit == other.suit;
 }
 
-// Inequality operator
 bool Card::operator!=(const Card &other) const
 {
     return !(*this == other);
