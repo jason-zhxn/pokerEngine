@@ -1,16 +1,9 @@
-#include "Card.h"
-#include "HandEvaluator.h"
+#include "PokerGame.h"
 #include <iostream>
 
 int main()
 {
-    Card card1("10", "Hearts");
-    Card card2("J", "Hearts");
-    Card card3("Q", "Hearts");
-    Card card4("K", "Hearts");
-    Card card5("A", "Hearts");
-
-    HandEvaluator evaluator;
-
+    PokerGame pokergame;
+    pokergame.playGame();
     return 0;
 }

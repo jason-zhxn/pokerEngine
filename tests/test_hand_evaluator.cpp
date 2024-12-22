@@ -56,7 +56,7 @@ TEST(HandEvaluatorTest, Flush)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FLUSH);
-    EXPECT_EQ(result.highCards[0], 13);// King is the highest card
+    EXPECT_EQ(result.highCards[0], 13);
 }
 
 TEST(HandEvaluatorTest, Straight)
@@ -67,7 +67,7 @@ TEST(HandEvaluatorTest, Straight)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
-    EXPECT_EQ(result.highCards[0], 6);// High card of the straight
+    EXPECT_EQ(result.highCards[0], 6);
 }
 
 TEST(HandEvaluatorTest, ThreeOfAKind)
@@ -78,7 +78,7 @@ TEST(HandEvaluatorTest, ThreeOfAKind)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::THREE_OF_A_KIND);
-    EXPECT_EQ(result.highCards[0], 10);// Rank of the three cards
+    EXPECT_EQ(result.highCards[0], 10);
 }
 
 TEST(HandEvaluatorTest, TwoPair)
@@ -89,9 +89,9 @@ TEST(HandEvaluatorTest, TwoPair)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
-    EXPECT_EQ(result.highCards[0], 11);// Higher pair
-    EXPECT_EQ(result.highCards[1], 10);// Lower pair
-    EXPECT_EQ(result.highCards[2], 13);// Kicker
+    EXPECT_EQ(result.highCards[0], 11);
+    EXPECT_EQ(result.highCards[1], 10);
+    EXPECT_EQ(result.highCards[2], 13);
 }
 
 TEST(HandEvaluatorTest, OnePair)
@@ -102,10 +102,10 @@ TEST(HandEvaluatorTest, OnePair)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::ONE_PAIR);
-    EXPECT_EQ(result.highCards[0], 10);// Rank of the pair
-    EXPECT_EQ(result.highCards[1], 13);// Kicker 1
-    EXPECT_EQ(result.highCards[2], 12);// Kicker 2
-    EXPECT_EQ(result.highCards[3], 11);// Kicker 3
+    EXPECT_EQ(result.highCards[0], 10);
+    EXPECT_EQ(result.highCards[1], 13);
+    EXPECT_EQ(result.highCards[2], 12);
+    EXPECT_EQ(result.highCards[3], 11);
 }
 
 TEST(HandEvaluatorTest, HighCard)
@@ -116,6 +116,6 @@ TEST(HandEvaluatorTest, HighCard)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::HIGH_CARD);
-    EXPECT_EQ(result.highCards[0], 11);// Highest card (Jack)
-    EXPECT_EQ(result.highCards[1], 9);// Next highest
+    EXPECT_EQ(result.highCards[0], 11);
+    EXPECT_EQ(result.highCards[1], 9);
 }

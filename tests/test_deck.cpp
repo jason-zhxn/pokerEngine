@@ -1,15 +1,12 @@
 #include "Deck.h"
 #include <gtest/gtest.h>
-#include <set>
 
-// Test Deck creation
 TEST(DeckTest, CreateDeck)
 {
     Deck deck;
     EXPECT_EQ(deck.getLength(), 52);
 }
 
-// Test popTop()
 TEST(DeckTest, PopTop)
 {
     Deck deck;
