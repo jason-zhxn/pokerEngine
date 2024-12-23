@@ -5,5 +5,5 @@ description = "Poker engine project"
 authors = ["Harry Guan <guanhuai2014@gmail.com"]
 
 [tool.poetry.dependencies]
-python = "^3.12"  # Python required for Conan
+python = "^3.12" 
 
