@@ -15,8 +15,8 @@ class PokerGame
     std::unique_ptr<Player> player;
     std::unique_ptr<Bot> bot;
     std::vector<Card> communityCards;
-    int pot;
-    int currentBet;
+    double pot;
+    double currentBet;
     bool playerIsDealer;
 
   public:

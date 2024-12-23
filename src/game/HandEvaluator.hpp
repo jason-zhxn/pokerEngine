@@ -22,11 +22,13 @@ class HandEvaluator
     struct HandResult
     {
         HandRank rank;
+        int identifier;
         std::vector<int> highCards;
         std::string toString() const;
     };
 
     HandResult evaluateHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards);
+    bool operator>(HandResult &left, HandResult &right) const;
 
   private:
     bool isFlush(const std::vector<Card> &hand);

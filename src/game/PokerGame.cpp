@@ -98,6 +98,7 @@ void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
 {
     std::cout << "=== " << phaseName << " ===\n";
     if (numCommunityCards > 0) dealCommunityCards(numCommunityCards);
+    executeBettingRound(*this);
 }
 
 void PokerGame::preflop()

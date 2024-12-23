@@ -32,6 +32,26 @@ std::string rankToString(HandEvaluator::HandRank rank)
     }
 }
 
+bool HandEvaluator::HandResult::operator==(HandResult &left, HandResult &right) const
+{
+    return (left.rank == right.rank && left.identifier == right.identifier);
+}
+
+bool HandEvaluator::HandResult::operator>(HandResult &left, HandResult &right) const
+{
+    if (left.rank > right.rank) {
+        return true;
+    } else if (left.rank < right.rank) {
+        return false;
+    } else {
+        if (left.identifier > right.identifier) {
+            return true;
+        } else if (left.identifier < right.identifier) {
+            return false;
+        }
+    }
+}
+
 std::string HandEvaluator::HandResult::toString() const
 {
     std::ostringstream oss;
