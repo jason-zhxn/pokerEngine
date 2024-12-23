@@ -33,7 +33,8 @@ TEST(HandEvaluatorTest, FourOfAKind)
     auto result = evaluator.evaluateHand(hand, communityCards);
 
     EXPECT_EQ(result.rank, HandEvaluator::FOUR_OF_A_KIND);
-    // EXPECT_EQ(result.highCards[0], 9);
+    EXPECT_EQ(result.identifier[0], 9);
+    EXPECT_EQ(result.highCards[0], 13);
 }
 
 TEST(HandEvaluatorTest, FullHouse)
@@ -58,7 +59,12 @@ TEST(HandEvaluatorTest, Flush)
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FLUSH);
     EXPECT_EQ(result.identifier[0], 13);
-    EXPECT_EQ(result.highCards.size(), 0);
+    EXPECT_EQ(result.highCards.size(), 5);
+    EXPECT_EQ(result.highCards[0], 13);
+    EXPECT_EQ(result.highCards[1], 11);
+    EXPECT_EQ(result.highCards[2], 9);
+    EXPECT_EQ(result.highCards[3], 5);
+    EXPECT_EQ(result.highCards[4], 2);
 }
 
 TEST(HandEvaluatorTest, Straight)

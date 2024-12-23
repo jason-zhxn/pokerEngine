@@ -45,6 +45,7 @@ bool HandEvaluator::HandResult::operator>(const HandResult &other) const
 std::string HandEvaluator::HandResult::toString() const
 {
     std::ostringstream oss;
+
     oss << rankToString(rank) << " with high cards: ";
     for (size_t i = 0; i < highCards.size(); ++i) {
         oss << highCards[i];
@@ -168,7 +169,7 @@ HandEvaluator::HandResult
 
     if (straight) {
         result.rank = STRAIGHT;
-        result.highCards = { highCard };
+        result.highCards = { kickers[0], kickers[1], kickers[2], kickers[3], kickers[4] };
         result.identifier = { highCard };
         return result;
     }
@@ -184,15 +185,17 @@ HandEvaluator::HandResult
         result.rank = TWO_PAIR;
         result.identifier = { pairs[0], pairs[1] };
 
-        // Exclude the two pair ranks from the kicker candidates
-        std::vector<int> filteredKickers;
-        for (int kicker : kickers) {
-            if (kicker != pairs[0] && kicker != pairs[1]) { filteredKickers.push_back(kicker); }
+        if (pairs.size() == 3) {
+            result.highCards = (kickers[0] != pairs[0] && kickers[0] != pairs[1] && kickers[0] > pairs[2])
+                                 ? std::vector<int>{ kickers[0] }
+                                 : std::vector<int>{ pairs[2] };
+        } else {
+            result.highCards = { kickers[0] };
         }
 
-        if (!filteredKickers.empty()) { result.highCards.push_back(filteredKickers[0]); }
         return result;
     }
+
 
     if (pairs.size() == 1) {
         result.rank = ONE_PAIR;
