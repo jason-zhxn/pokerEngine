@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Bot.hpp"
 #include "Deck.hpp"
 #include "HandEvaluator.hpp"
 #include "Player.hpp"
@@ -9,31 +10,30 @@
 
 class PokerGame
 {
+  private:
+    std::unique_ptr<Deck> deck;
+    std::unique_ptr<Player> player;
+    std::unique_ptr<Bot> bot;
+    std::vector<Card> communityCards;
+    int pot;
+    int currentBet;
+    bool playerIsDealer;
+
   public:
     PokerGame();
     void playGame();
 
   private:
+    friend void executeBettingRound(PokerGame &game);
+    void resetGameState();
+    void collectBlinds();
+    void shiftDealerButton();
+    void dealHoleCards();
+    void dealCommunityCards(int numCards);
     void handlePhase(const std::string &phaseName, int numCommunityCards = 0);
     void preflop();
     void flop();
     void turn();
     void river();
-    friend void executeBettingRound(PokerGame &game);
-
-    void handlePlayerDecision(Player &player, int currentBet, int &pot, int &playerBet);
-
-    void dealHoleCards();
-    void dealCommunityCards(int numCards);
     void payout();
-    void resetGameState();
-
-    void clearConsole() const;
-
-    std::unique_ptr<Deck> deck;
-    std::vector<std::unique_ptr<Player>> players;
-    std::vector<Card> communityCards;
-    int pot;
-    int currentBet;
-    int dealerIndex;
 };

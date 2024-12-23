@@ -3,16 +3,15 @@
 
 TEST(PlayerTest, PlayerInitiation)
 {
-    Player player("Harry", 100, false);
+    Player player("Harry", 100);
     EXPECT_EQ(player.getChips(), 100);
     EXPECT_EQ(player.getName(), "Harry");
     EXPECT_EQ(player.isActive(), true);
-    EXPECT_EQ(player.isBot(), false);
 }
 
 TEST(PlayerTest, PlayerModifiers)
 {
-    Player player("Harry", 100, false);
+    Player player("Harry", 100);
     player.addChips(10);
     EXPECT_EQ(player.getChips(), 110);
     player.deductChips(100);
@@ -23,7 +22,7 @@ TEST(PlayerTest, PlayerModifiers)
 
 TEST(PlayerTest, PlayerHand)
 {
-    Player player("Harry", 100, false);
+    Player player("Harry", 100);
 
     std::vector<Card> hand = { Card("J", "Spades"), Card("K", "Hearts") };
 

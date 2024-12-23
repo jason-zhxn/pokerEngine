@@ -6,53 +6,64 @@ void executeBettingRound(PokerGame &game)
 {
     std::cout << "=== Betting Round ===" << std::endl;
 
-    int activePlayer = (game.dealerIndex + 1) % game.players.size();
-    int lastToAct = game.dealerIndex;
+    Agent *currentPlayer =
+      game.playerIsDealer ? static_cast<Agent *>(game.bot.get()) : static_cast<Agent *>(game.player.get());
+    Agent *opponent =
+      game.playerIsDealer ? static_cast<Agent *>(game.player.get()) : static_cast<Agent *>(game.bot.get());
+
     bool bettingComplete = false;
+    int highestBet = game.currentBet;
 
-    int highestBet = 0;
     while (!bettingComplete) {
-        Player &player = *game.players[activePlayer];
+        if (currentPlayer->isActive()) {
+            if (currentPlayer == game.player.get()) {
+                std::cout << currentPlayer->getName() << "'s turn. Current bet: " << highestBet
+                          << ", your chips: " << currentPlayer->getChips() << std::endl;
 
-        if (player.isActive()) {
-            std::cout << player.getName() << "'s turn. Current bet: " << highestBet
-                      << ", your chips: " << player.getChips() << std::endl;
+                std::cout << "Enter your action (fold, call, raise): ";
+                std::string action;
+                std::cin >> action;
 
-            std::cout << "Enter your action (fold, call, raise): ";
-            std::string action;
-            std::cin >> action;
+                if (action == "fold") {
+                    currentPlayer->fold();
+                    std::cout << currentPlayer->getName() << " folds." << std::endl;
+                    break;
+                } else if (action == "call") {
+                    int amountToCall = highestBet - currentPlayer->getCurrentBet();
+                    if (amountToCall > currentPlayer->getChips()) { amountToCall = currentPlayer->getChips(); }
+                    currentPlayer->deductChips(amountToCall);
+                    game.pot += amountToCall;
+                    currentPlayer->setCurrentBet(highestBet);
+                    std::cout << currentPlayer->getName() << " calls with " << amountToCall << " chips." << std::endl;
+                } else if (action == "raise") {
+                    int raiseAmount;
+                    std::cout << "Enter raise amount: ";
+                    std::cin >> raiseAmount;
 
-            if (action == "fold") {
-                player.fold();
-                std::cout << player.getName() << " folds." << std::endl;
-            } else if (action == "call") {
-                int amountToCall = highestBet - player.getCurrentBet();
-                if (amountToCall > player.getChips()) { amountToCall = player.getChips(); }
-                player.deductChips(amountToCall);
-                game.pot += amountToCall;
-                player.setCurrentBet(highestBet);
-                std::cout << player.getName() << " calls with " << amountToCall << " chips." << std::endl;
-            } else if (action == "raise") {
-                int raiseAmount;
-                std::cout << "Enter raise amount: ";
-                std::cin >> raiseAmount;
-
-                int totalBet = highestBet + raiseAmount;
-                if (totalBet > player.getChips()) { totalBet = player.getChips(); }
-                highestBet = totalBet;
-                player.deductChips(totalBet - player.getCurrentBet());
-                game.pot += totalBet - player.getCurrentBet();
-                player.setCurrentBet(totalBet);
-                std::cout << player.getName() << " raises to " << highestBet << " chips." << std::endl;
+                    int totalBet = highestBet + raiseAmount;
+                    if (totalBet > currentPlayer->getChips()) { totalBet = currentPlayer->getChips(); }
+                    highestBet = totalBet;
+                    currentPlayer->deductChips(totalBet - currentPlayer->getCurrentBet());
+                    game.pot += totalBet - currentPlayer->getCurrentBet();
+                    currentPlayer->setCurrentBet(totalBet);
+                    std::cout << currentPlayer->getName() << " raises to " << highestBet << " chips." << std::endl;
+                } else {
+                    std::cout << "Invalid action. Please try again." << std::endl;
+                    continue;
+                }
             } else {
-                std::cout << "Invalid action. Please try again." << std::endl;
-                continue;
+                game.bot->makeMove();
+                bettingComplete = true;
             }
         }
 
-        activePlayer = (activePlayer + 1) % game.players.size();
-        if (activePlayer == lastToAct) { bettingComplete = true; }
+        std::swap(currentPlayer, opponent);
+
+        if (currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) {
+            bettingComplete = true;
+        }
     }
 
-    for (auto &playerPtr : game.players) { playerPtr->setCurrentBet(0); }
+    game.player->setCurrentBet(0);
+    game.bot->setCurrentBet(0);
 }
