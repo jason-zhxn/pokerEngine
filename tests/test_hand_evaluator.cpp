@@ -33,7 +33,6 @@ TEST(HandEvaluatorTest, FourOfAKind)
     auto result = evaluator.evaluateHand(hand, communityCards);
 
     EXPECT_EQ(result.rank, HandEvaluator::FOUR_OF_A_KIND);
-    // EXPECT_EQ(result.highCards[0], 9);
 }
 
 TEST(HandEvaluatorTest, FullHouse)

@@ -20,14 +20,15 @@ class Card
 
     int getValue() const
     {
+        if (rank == "T") return 10;
+        if (rank == "J") return 11;
+        if (rank == "Q") return 12;
+        if (rank == "K") return 13;
+        if (rank == "A") return 14;
         try {
             return std::stoi(rank);
         } catch (const std::invalid_argument &) {
-            if (rank == "J") return 11;
-            if (rank == "Q") return 12;
-            if (rank == "K") return 13;
-            if (rank == "A") return 14;
-            throw;
+            throw std::invalid_argument("Invalid card rank: " + rank);
         }
     }
 
