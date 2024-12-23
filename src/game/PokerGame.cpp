@@ -1,7 +1,4 @@
-#include "PokerGame.h"
-#include "Deck.h"
-#include "HandEvaluator.h"
-#include "Player.h"
+#include "PokerGame.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>

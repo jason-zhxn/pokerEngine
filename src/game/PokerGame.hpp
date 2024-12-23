@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Deck.h"
-#include "HandEvaluator.h"
-#include "Player.h"
+#include "Deck.hpp"
+#include "HandEvaluator.hpp"
+#include "Player.hpp"
 #include <memory>
 #include <string>
 #include <vector>

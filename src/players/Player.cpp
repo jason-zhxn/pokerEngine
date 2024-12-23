@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "Player.hpp"
 
 Player::Player(const std::string &name, int initialChips, bool bot)
   : name(name), chips(initialChips), active(true), bot(bot)
