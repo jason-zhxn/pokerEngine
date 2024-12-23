@@ -44,8 +44,9 @@ TEST(HandEvaluatorTest, FullHouse)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FULL_HOUSE);
-    EXPECT_EQ(result.highCards[0], 10);
-    EXPECT_EQ(result.highCards[1], 11);
+    EXPECT_EQ(result.identifier[0], 10);
+    EXPECT_EQ(result.identifier[1], 11);
+    EXPECT_EQ(result.highCards.size(), 0);
 }
 
 TEST(HandEvaluatorTest, Flush)
@@ -56,7 +57,8 @@ TEST(HandEvaluatorTest, Flush)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FLUSH);
-    EXPECT_EQ(result.highCards[0], 13);
+    EXPECT_EQ(result.identifier[0], 13);
+    EXPECT_EQ(result.highCards.size(), 0);
 }
 
 TEST(HandEvaluatorTest, Straight)
@@ -67,7 +69,7 @@ TEST(HandEvaluatorTest, Straight)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
-    EXPECT_EQ(result.highCards[0], 6);
+    EXPECT_EQ(result.identifier[0], 6);
 }
 
 TEST(HandEvaluatorTest, ThreeOfAKind)
@@ -78,7 +80,9 @@ TEST(HandEvaluatorTest, ThreeOfAKind)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::THREE_OF_A_KIND);
-    EXPECT_EQ(result.highCards[0], 10);
+    EXPECT_EQ(result.identifier[0], 10);
+    EXPECT_EQ(result.highCards[0], 13);
+    EXPECT_EQ(result.highCards[1], 11);
 }
 
 TEST(HandEvaluatorTest, TwoPair)
@@ -89,9 +93,24 @@ TEST(HandEvaluatorTest, TwoPair)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
-    EXPECT_EQ(result.highCards[0], 11);
-    EXPECT_EQ(result.highCards[1], 10);
-    EXPECT_EQ(result.highCards[2], 13);
+    EXPECT_EQ(result.identifier[0], 11);
+    EXPECT_EQ(result.identifier[1], 10);
+    EXPECT_EQ(result.highCards[0], 13);
+}
+
+TEST(HandEvaluatorTest, TwoPairCounterfeited)
+{
+    HandEvaluator evaluator;
+    std::vector<Card> hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    std::vector<Card> communityCards = {
+        Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs"), Card("K", "Hearts"), Card("8", "Clubs")
+    };
+
+    auto result = evaluator.evaluateHand(hand, communityCards);
+    EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
+    EXPECT_EQ(result.identifier[0], 13);
+    EXPECT_EQ(result.identifier[1], 11);
+    EXPECT_EQ(result.highCards[0], 10);
 }
 
 TEST(HandEvaluatorTest, OnePair)
@@ -102,10 +121,10 @@ TEST(HandEvaluatorTest, OnePair)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::ONE_PAIR);
-    EXPECT_EQ(result.highCards[0], 10);
-    EXPECT_EQ(result.highCards[1], 13);
-    EXPECT_EQ(result.highCards[2], 12);
-    EXPECT_EQ(result.highCards[3], 11);
+    EXPECT_EQ(result.identifier[0], 10);
+    EXPECT_EQ(result.highCards[0], 13);
+    EXPECT_EQ(result.highCards[1], 12);
+    EXPECT_EQ(result.highCards[2], 11);
 }
 
 TEST(HandEvaluatorTest, HighCard)
@@ -116,6 +135,9 @@ TEST(HandEvaluatorTest, HighCard)
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::HIGH_CARD);
-    EXPECT_EQ(result.highCards[0], 11);
-    EXPECT_EQ(result.highCards[1], 9);
+    EXPECT_EQ(result.identifier[0], 11);
+    EXPECT_EQ(result.highCards[0], 9);
+    EXPECT_EQ(result.highCards[1], 7);
+    EXPECT_EQ(result.highCards[2], 5);
+    EXPECT_EQ(result.highCards[3], 2);
 }

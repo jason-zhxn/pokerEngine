@@ -128,17 +128,14 @@ void PokerGame::payout()
     auto heroResult = evaluator.evaluateHand(player->getHand(), communityCards);
     auto villainResult = evaluator.evaluateHand(bot->getHand(), communityCards);
 
-    if (heroResult == villainResult)
-    {
+    if (heroResult == villainResult) {
         player->addChips(pot / 2);
         bot->addChips(pot / 2);
         std::cout << "It's a tie! Pot is split.\n";
-    } else if (heroResult > villainResult)
-    {
+    } else if (heroResult > villainResult) {
         player->addChips(pot);
         std::cout << player->getName() << " wins the pot of " << pot << " chips!\n";
-    } else
-    {
+    } else {
         bot->addChips(pot);
         std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
     }
