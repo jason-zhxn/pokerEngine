@@ -22,10 +22,10 @@ Card Deck::popTop()
     return cards[--activeSize];
 }
 
-void Deck::shuffle(bool includeRemoved)
+void Deck::shuffle()
 {
     auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::shuffle(cards.begin(), cards.begin(), std::default_random_engine(seed));
+    std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
 }
 
 bool Deck::isEmpty() const

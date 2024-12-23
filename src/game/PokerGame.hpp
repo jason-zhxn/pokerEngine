@@ -11,16 +11,16 @@ class PokerGame
 {
   public:
     PokerGame();
-
     void playGame();
 
   private:
+    void handlePhase(const std::string &phaseName, int numCommunityCards = 0);
     void preflop();
     void flop();
     void turn();
     void river();
+    friend void executeBettingRound(PokerGame &game);
 
-    void executeBettingRound();
     void handlePlayerDecision(Player &player, int currentBet, int &pot, int &playerBet);
 
     void dealHoleCards();

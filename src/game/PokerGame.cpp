@@ -1,4 +1,5 @@
 #include "PokerGame.hpp"
+#include "BettingRound.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -6,7 +7,6 @@
 PokerGame::PokerGame() : pot(0), currentBet(0)
 {
     deck = std::make_unique<Deck>();
-    deck->shuffle();
     players.push_back(std::make_unique<Player>("Hero", 100, false));
     players.push_back(std::make_unique<Player>("Villain", 100, true));
 }
@@ -17,13 +17,13 @@ void PokerGame::playGame()
         resetGameState();
         dealHoleCards();
         preflop();
-        executeBettingRound();
+        executeBettingRound(*this);
         flop();
-        executeBettingRound();
+        executeBettingRound(*this);
         turn();
-        executeBettingRound();
+        executeBettingRound(*this);
         river();
-        executeBettingRound();
+        executeBettingRound(*this);
         payout();
 
         if (players[0]->getChips() == 0 || players[1]->getChips() == 0) {
@@ -37,27 +37,30 @@ void PokerGame::playGame()
     }
 }
 
+void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
+{
+    std::cout << "=== " << phaseName << " ===" << std::endl;
+    if (numCommunityCards > 0) { dealCommunityCards(numCommunityCards); }
+}
+
 void PokerGame::preflop()
 {
-    std::cout << "=== Preflop ===" << std::endl;
+    handlePhase("Preflop");
 }
 
 void PokerGame::flop()
 {
-    std::cout << "=== Flop ===" << std::endl;
-    dealCommunityCards(3);
+    handlePhase("Flop", 3);
 }
 
 void PokerGame::turn()
 {
-    std::cout << "=== Turn ===" << std::endl;
-    dealCommunityCards(1);
+    handlePhase("Turn", 1);
 }
 
 void PokerGame::river()
 {
-    std::cout << "=== River ===" << std::endl;
-    dealCommunityCards(1);
+    handlePhase("River", 1);
 }
 
 void PokerGame::dealHoleCards()
@@ -84,61 +87,6 @@ void PokerGame::dealCommunityCards(int numCards)
         communityCards.push_back(card);
         std::cout << "Community card dealt: " << card.toString() << std::endl;
     }
-}
-
-void PokerGame::executeBettingRound()
-{
-    std::cout << "=== Betting Round ===" << std::endl;
-
-    int activePlayer = (dealerIndex + 1) % players.size();
-    int lastToAct = dealerIndex;
-    bool bettingComplete = false;
-
-    int highestBet = 0;
-    while (!bettingComplete) {
-        Player &player = *players[activePlayer];
-
-        if (player.isActive()) {
-            std::cout << player.getName() << "'s turn. Current bet: " << highestBet
-                      << ", your chips: " << player.getChips() << std::endl;
-
-            std::cout << "Enter your action (fold, call, raise): ";
-            std::string action;
-            std::cin >> action;
-
-            if (action == "fold") {
-                player.fold();
-                std::cout << player.getName() << " folds." << std::endl;
-            } else if (action == "call") {
-                int amountToCall = highestBet - player.getCurrentBet();
-                if (amountToCall > player.getChips()) { amountToCall = player.getChips(); }
-                player.deductChips(amountToCall);
-                pot += amountToCall;
-                player.setCurrentBet(highestBet);
-                std::cout << player.getName() << " calls with " << amountToCall << " chips." << std::endl;
-            } else if (action == "raise") {
-                int raiseAmount;
-                std::cout << "Enter raise amount: ";
-                std::cin >> raiseAmount;
-
-                int totalBet = highestBet + raiseAmount;
-                if (totalBet > player.getChips()) { totalBet = player.getChips(); }
-                highestBet = totalBet;
-                player.deductChips(totalBet - player.getCurrentBet());
-                pot += totalBet - player.getCurrentBet();
-                player.setCurrentBet(totalBet);
-                std::cout << player.getName() << " raises to " << highestBet << " chips." << std::endl;
-            } else {
-                std::cout << "Invalid action. Please try again." << std::endl;
-                continue;
-            }
-        }
-
-        activePlayer = (activePlayer + 1) % players.size();
-        if (activePlayer == lastToAct) { bettingComplete = true; }
-    }
-
-    for (auto &playerPtr : players) { playerPtr->setCurrentBet(0); }
 }
 
 void PokerGame::payout()
