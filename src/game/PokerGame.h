@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Deck.h"
+#include "Deck.hpp"
 #include "HandEvaluator.h"
 #include "Player.h"
 #include <memory>

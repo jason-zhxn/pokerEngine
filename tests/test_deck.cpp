@@ -1,10 +1,10 @@
-#include "Deck.h"
+#include "Deck.hpp"
 #include <gtest/gtest.h>
 
 TEST(DeckTest, CreateDeck)
 {
     Deck deck;
-    EXPECT_EQ(deck.getLength(), 52);
+    EXPECT_EQ(deck.getRemainingCards(), 52);
 }
 
 TEST(DeckTest, PopTop)
@@ -12,5 +12,5 @@ TEST(DeckTest, PopTop)
     Deck deck;
     Card card = deck.popTop();
     EXPECT_EQ(typeid(card), typeid(card));
-    EXPECT_EQ(deck.getLength(), 51);
+    EXPECT_EQ(deck.getRemainingCards(), 51);
 }

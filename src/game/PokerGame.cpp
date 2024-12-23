@@ -1,5 +1,5 @@
 #include "PokerGame.h"
-#include "Deck.h"
+#include "Deck.hpp"
 #include "HandEvaluator.h"
 #include "Player.h"
 #include <algorithm>
@@ -18,6 +18,7 @@ void PokerGame::playGame()
 {
     while (true) {
         resetGameState();
+        deck->shuffle();
         dealHoleCards();
         preflop();
         executeBettingRound();
