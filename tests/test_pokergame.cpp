@@ -1,4 +1,4 @@
-#include "PokerGame.h"
+#include "PokerGame.hpp"
 #include <gtest/gtest.h>
 
 TEST(GameTest, Initiation)

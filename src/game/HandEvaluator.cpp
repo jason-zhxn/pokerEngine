@@ -1,4 +1,4 @@
-#include "HandEvaluator.h"
+#include "HandEvaluator.hpp"
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>

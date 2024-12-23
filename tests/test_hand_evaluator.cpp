@@ -1,5 +1,5 @@
-#include "Card.h"
-#include "HandEvaluator.h"
+#include "Card.hpp"
+#include "HandEvaluator.hpp"
 #include <gtest/gtest.h>
 
 TEST(HandEvaluatorTest, RoyalFlush)

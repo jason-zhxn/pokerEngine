@@ -1,4 +1,4 @@
-#include "Deck.h"
+#include "Deck.hpp"
 #include <gtest/gtest.h>
 
 TEST(DeckTest, CreateDeck)

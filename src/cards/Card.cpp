@@ -1,4 +1,4 @@
-#include "Card.h"
+#include "Card.hpp"
 #include <stdexcept>
 
 Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suit(suit) {}

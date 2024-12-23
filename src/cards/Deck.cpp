@@ -1,9 +1,10 @@
-#include "Deck.h"
 #include <algorithm>
 #include <chrono>
 #include <random>
 #include <stdexcept>
 #include <string>
+
+#include "Deck.hpp"
 
 Deck::Deck()
 {
@@ -12,7 +13,7 @@ Deck::Deck()
     for (const auto &suit : suits) {
         for (const auto &rank : ranks) { cards.emplace_back(Card(rank, suit)); }
     }
-    activeSize = cards.size();// activeSize as a pointer to ignore "dealt" cards
+    activeSize = cards.size();
 }
 
 Card Deck::popTop()

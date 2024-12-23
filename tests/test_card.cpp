@@ -1,4 +1,4 @@
-#include "Card.h"
+#include "Card.hpp"
 #include <gtest/gtest.h>
 
 TEST(CardTest, ValidCard)

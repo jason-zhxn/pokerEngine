@@ -1,15 +1,15 @@
 #pragma once
 
+#include "Card.hpp"
 #include <vector>
-#include "Card.h"
 
 class Deck
 {
-private:
+  private:
     std::vector<Card> cards;
     size_t activeSize;
 
-public:
+  public:
     Deck();
     Card popTop();
     void shuffle(bool includeRemoved = true);
