@@ -39,7 +39,7 @@ bool HandEvaluator::HandResult::operator==(const HandResult &other) const
 
 bool HandEvaluator::HandResult::operator>(const HandResult &other) const
 {
-    return (rank > other.rank) || (rank == other.rank && rank > other.identifier);
+    return (rank > other.rank) || (rank == other.rank && identifier > other.identifier);
 }
 
 std::string HandEvaluator::HandResult::toString() const
@@ -113,22 +113,24 @@ HandEvaluator::HandResult
 {
     HandResult result;
 
-    if (flush && straight) {
+    if (flush && straight) {//handle royal and straight flushes
         result.rank = (highCard == 14) ? ROYAL_FLUSH : STRAIGHT_FLUSH;
-        result.highCards = { highCard };
+        result.identifier = { highCard };
+        result.highCards = { };
         return result;
     }
 
     bool hasFourOfAKind = false;
     bool hasThreeOfAKind = false;
     int threeOfAKindRank = 0;
+    int fourOfAKindRank = 0;
     std::vector<int> pairs;
     std::vector<int> kickers;
 
     for (const auto &[rank, count] : rankFrequency) {
         if (count == 4) {
             hasFourOfAKind = true;
-            result.highCards.push_back(rank);
+            fourOfAKindRank = rank;
         } else if (count == 3) {
             hasThreeOfAKind = true;
             threeOfAKindRank = rank;
@@ -144,13 +146,15 @@ HandEvaluator::HandResult
 
     if (hasFourOfAKind) {
         result.rank = FOUR_OF_A_KIND;
-        result.highCards = { result.highCards[0], kickers[0] };
+        result.identifier = { fourOfAKindRank };
+        result.highCards = { kickers[0] };
         return result;
     }
 
     if (hasThreeOfAKind && !pairs.empty()) {
         result.rank = FULL_HOUSE;
-        result.highCards = { threeOfAKindRank, pairs[0] };
+        result.identifier = { threeOfAKindRank, pairs[0] };
+        result.highCards = { };
         return result;
     }
 
@@ -159,7 +163,7 @@ HandEvaluator::HandResult
         result.highCards.clear();
         for (const auto &[rank, count] : rankFrequency) {
             result.highCards.push_back(rank);
-            if (result.highCards.size() == 5) break;// Only top 5 cards
+            if (result.highCards.size() == 5) break;//Only top 5 cards
         }
         std::sort(result.highCards.rbegin(), result.highCards.rend());
         return result;
@@ -173,34 +177,33 @@ HandEvaluator::HandResult
 
     if (hasThreeOfAKind) {
         result.rank = THREE_OF_A_KIND;
-        result.highCards = { threeOfAKindRank };
-        result.highCards.insert(result.highCards.end(), kickers.begin(), kickers.begin() + 2);
+        result.identifier = { threeOfAKindRank };
+        result.highCards = { kickers[0], kickers[1] };
         return result;
     }
 
     if (pairs.size() >= 2) {
         result.rank = TWO_PAIR;
-        result.highCards = { pairs[0], pairs[1] };
-        result.highCards.push_back(kickers[0]);
+        result.identifier = { pairs[0], pairs[1] };
+        result.highCards.push_back(kickers[0]);//need to address counterfeit here i believe
         return result;
     }
 
     if (pairs.size() == 1) {
         result.rank = ONE_PAIR;
-        result.highCards = { pairs[0] };
-        result.highCards.insert(result.highCards.end(), kickers.begin(), kickers.begin() + 3);
+        result.identifier = { pairs[0] };
+        result.highCards = { kickers[0], kickers[1], kickers[2] };
         return result;
     }
 
     result.rank = HIGH_CARD;
-    result.highCards.insert(result.highCards.end(), kickers.begin(), kickers.begin() + 5);
+    result.highCards = { kickers[0], kickers[1], kickers[2], kickers[3], kickers[4] };
     return result;
 }
 
 HandEvaluator::HandResult HandEvaluator::evaluateHand(const std::vector<Card> &hand,
   const std::vector<Card> &communityCards)
 {
-
     std::vector<Card> fullHand = mergeHand(hand, communityCards);
     bool flush = isFlush(fullHand);
     int highCard = 0;

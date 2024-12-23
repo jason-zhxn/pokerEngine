@@ -15,8 +15,8 @@ void PokerGame::playGame()
 {
     while (true) {
         resetGameState();
-        dealHoleCards();
         collectBlinds();
+        dealHoleCards();
 
         preflop();
         flop();
@@ -128,23 +128,26 @@ void PokerGame::payout()
     auto heroResult = evaluator.evaluateHand(player->getHand(), communityCards);
     auto villainResult = evaluator.evaluateHand(bot->getHand(), communityCards);
 
-    std::cout << "Villain's hole cards: " << bot->getHand()[0].toString() << " " << bot->getHand()[1].toString()
-              << "\n";
+    if (heroResult == villainResult)
+    {
+        player->addChips(pot / 2);
+        bot->addChips(pot / 2);
+        std::cout << "It's a tie! Pot is split.\n";
+    } else if (heroResult > villainResult)
+    {
+        player->addChips(pot);
+        std::cout << player->getName() << " wins the pot of " << pot << " chips!\n";
+    } else
+    {
+        bot->addChips(pot);
+        std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
+    }
 
+    std::cout << "Villain's hole cards were: " << bot->getHand()[0].toString() << " " << bot->getHand()[1].toString()
+              << "\n";
 
     std::cout << player->getName() << "'s hand: " << heroResult.toString() << "\n";
     std::cout << bot->getName() << "'s hand: " << villainResult.toString() << "\n";
 
-    if (heroResult.rank > villainResult.rank) {
-        player->addChips(pot);
-        std::cout << player->getName() << " wins the pot of " << pot << " chips!\n";
-    } else if (heroResult.rank < villainResult.rank) {
-        bot->addChips(pot);
-        std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
-    } else {
-        player->addChips(pot / 2);
-        bot->addChips(pot / 2);
-        std::cout << "It's a tie! Pot is split.\n";
-    }
     pot = 0;
 }

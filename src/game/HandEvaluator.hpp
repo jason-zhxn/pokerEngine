@@ -23,7 +23,7 @@ class HandEvaluator
     {
       public:
         HandRank rank;
-        int identifier;
+        std::vector<int> identifier;
         std::vector<int> highCards;
         std::string toString() const;
         bool operator==(const HandResult &other) const;
