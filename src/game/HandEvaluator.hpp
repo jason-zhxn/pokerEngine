@@ -23,6 +23,7 @@ class HandEvaluator
     {
         HandRank rank;
         std::vector<int> highCards;
+        std::string toString() const;
     };
 
     HandResult evaluateHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards);

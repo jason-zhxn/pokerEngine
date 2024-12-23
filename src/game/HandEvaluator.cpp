@@ -1,7 +1,47 @@
 #include "HandEvaluator.hpp"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
+
+std::string rankToString(HandEvaluator::HandRank rank)
+{
+    switch (rank) {
+    case HandEvaluator::HIGH_CARD:
+        return "High Card";
+    case HandEvaluator::ONE_PAIR:
+        return "One Pair";
+    case HandEvaluator::TWO_PAIR:
+        return "Two Pair";
+    case HandEvaluator::THREE_OF_A_KIND:
+        return "Three of a Kind";
+    case HandEvaluator::STRAIGHT:
+        return "Straight";
+    case HandEvaluator::FLUSH:
+        return "Flush";
+    case HandEvaluator::FULL_HOUSE:
+        return "Full House";
+    case HandEvaluator::FOUR_OF_A_KIND:
+        return "Four of a Kind";
+    case HandEvaluator::STRAIGHT_FLUSH:
+        return "Straight Flush";
+    case HandEvaluator::ROYAL_FLUSH:
+        return "Royal Flush";
+    default:
+        return "Unknown Hand";
+    }
+}
+
+std::string HandEvaluator::HandResult::toString() const
+{
+    std::ostringstream oss;
+    oss << rankToString(rank) << " with high cards: ";
+    for (size_t i = 0; i < highCards.size(); ++i) {
+        oss << highCards[i];
+        if (i < highCards.size() - 1) { oss << ", "; }
+    }
+    return oss.str();
+}
 
 std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards)
 {

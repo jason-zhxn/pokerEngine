@@ -127,8 +127,12 @@ void PokerGame::payout()
     auto heroResult = evaluator.evaluateHand(player->getHand(), communityCards);
     auto villainResult = evaluator.evaluateHand(bot->getHand(), communityCards);
 
-    std::cout << player->getName() << "'s hand: " << heroResult.rank << "\n";
-    std::cout << bot->getName() << "'s hand: " << villainResult.rank << "\n";
+    std::cout << "Villain's hole cards: " << bot->getHand()[0].toString() << " " << bot->getHand()[1].toString()
+              << "\n";
+
+
+    std::cout << player->getName() << "'s hand: " << heroResult.toString() << "\n";
+    std::cout << bot->getName() << "'s hand: " << villainResult.toString() << "\n";
 
     if (heroResult.rank > villainResult.rank) {
         player->addChips(pot);

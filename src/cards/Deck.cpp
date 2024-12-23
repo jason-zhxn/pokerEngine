@@ -24,8 +24,10 @@ Card Deck::popTop()
 
 void Deck::shuffle()
 {
-    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(cards.begin(), cards.end(), g);
+    activeSize = cards.size();
 }
 
 bool Deck::isEmpty() const
