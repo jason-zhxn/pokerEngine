@@ -1,10 +1,7 @@
 #include "HandEvaluator.hpp"
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
 
-std::string rankToString(HandEvaluator::HandRank rank)
+// Simple rank-to-string helper for debugging
+static std::string rankToString(HandEvaluator::HandRank rank)
 {
     switch (rank) {
     case HandEvaluator::HIGH_CARD:
@@ -39,59 +36,78 @@ bool HandEvaluator::HandResult::operator==(const HandResult &other) const
 
 bool HandEvaluator::HandResult::operator>(const HandResult &other) const
 {
-    return (rank > other.rank) || (rank == other.rank && identifier > other.identifier);
+    if (*this == other) { return false; }
+    if (rank > other.rank) {
+        return true;
+    } else if (rank < other.rank) {
+        return false;
+    }
+    for (size_t i = 0; i < identifier.size() && i < other.identifier.size(); ++i) {
+        if (identifier[i] > other.identifier[i]) {
+            return true;
+        } else if (identifier[i] < other.identifier[i]) {
+            return false;
+        }
+    }
+    throw std::logic_error("Identifier vector not same length, shouldn't happen!");
+}
+
+bool HandEvaluator::HandResult::operator<(const HandResult &other) const
+{
+    return !(*this > other || *this == other);
 }
 
 std::string HandEvaluator::HandResult::toString() const
 {
     std::ostringstream oss;
-
-    oss << rankToString(rank) << " with high cards: ";
-    for (size_t i = 0; i < highCards.size(); ++i) {
-        oss << highCards[i];
-        if (i < highCards.size() - 1) { oss << ", "; }
+    oss << rankToString(rank) << " with identifiers: ";
+    for (size_t i = 0; i < identifier.size(); ++i) {
+        oss << identifier[i];
+        if (i < identifier.size() - 1) { oss << ", "; }
     }
     return oss.str();
 }
 
 std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards)
 {
+    if (hand.size() > 2 || communityCards.size() > 5) {
+        throw std::logic_error("Maximum of 2 hole cards and 5 community cards allowed.");
+    }
     std::vector<Card> fullHand = hand;
     fullHand.insert(fullHand.end(), communityCards.begin(), communityCards.end());
     return fullHand;
 }
 
-bool HandEvaluator::isFlush(const std::vector<Card> &hand)
+bool HandEvaluator::isFlush(const std::vector<Card> &allCards, std::string &flushSuit)
 {
     std::map<std::string, int> suitCount;
-    for (const auto &card : hand) {
+    for (const auto &card : allCards) {
         suitCount[card.getSuit()]++;
-        if (suitCount[card.getSuit()] >= 5) { return true; }
+        if (suitCount[card.getSuit()] >= 5) {
+            flushSuit = card.getSuit();
+            return true;
+        }
     }
     return false;
 }
 
-bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
+bool HandEvaluator::isStraight(const std::vector<int> &ranks, int &highCard)
 {
-    std::vector<int> ranks;
-    for (const auto &card : hand) {
-        int value = card.getValue();
-        if (value < 2 || value > 14) { throw std::invalid_argument("Invalid card value: " + std::to_string(value)); }
-        ranks.push_back(value);
+    if (ranks.size() < 5) { return false; }
+
+    std::vector<int> sorted = ranks;
+    std::sort(sorted.begin(), sorted.end());
+    sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
+
+    if (std::find(sorted.begin(), sorted.end(), 14) != sorted.end()) {
+        sorted.push_back(1);
+        std::sort(sorted.begin(), sorted.end());
+        sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
     }
 
-    std::sort(ranks.begin(), ranks.end());
-    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
-    if (ranks.size() < 5) return false;
-
-    if (std::find(ranks.begin(), ranks.end(), 14) != ranks.end()) {
-        ranks.push_back(1);
-        std::sort(ranks.begin(), ranks.end());
-    }
-
-    for (size_t i = 0; i <= ranks.size() - 5; ++i) {
-        if (ranks[i + 4] - ranks[i] == 4) {
-            highCard = ranks[i + 4];
+    for (size_t i = 0; i + 4 < sorted.size(); ++i) {
+        if (sorted[i + 4] - sorted[i] == 4) {
+            highCard = sorted[i + 4];
             return true;
         }
     }
@@ -99,114 +115,143 @@ bool HandEvaluator::isStraight(const std::vector<Card> &hand, int &highCard)
     return false;
 }
 
-std::map<int, int> HandEvaluator::getRankFrequency(const std::vector<Card> &hand)
-{
-    std::map<int, int> rankFrequency;
-    for (const auto &card : hand) { rankFrequency[card.getValue()]++; }
-    return rankFrequency;
-}
-
-HandEvaluator::HandResult
-  HandEvaluator::determineBestHand(const std::map<int, int> &rankFrequency, bool flush, bool straight, int highCard)
+HandEvaluator::HandResult HandEvaluator::determineBestHand(const std::vector<Card> &allCards)
 {
     HandResult result;
 
-    // Handle straight and royal flushes
-    if (flush && straight) {
-        result.rank = (highCard == 14) ? ROYAL_FLUSH : STRAIGHT_FLUSH;
-        result.identifier = { highCard };
-        result.highCards = { highCard };
-        return result;
+    std::string flushSuit;
+    bool hasFlush = isFlush(allCards, flushSuit);
+
+    std::vector<int> ranks;
+    ranks.reserve(allCards.size());
+    for (auto &c : allCards) { ranks.push_back(c.getValue()); }
+    std::sort(ranks.begin(), ranks.end());
+    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
+
+    int topStraightRank = 0;
+    bool hasStraight = isStraight(ranks, topStraightRank);
+
+    std::map<int, int> freq;
+    for (auto &c : allCards) { freq[c.getValue()]++; }
+    // Sort them by (count DESC, rank DESC)
+    std::vector<std::pair<int, int>> freqVec;
+    freqVec.reserve(freq.size());
+    for (auto &[val, count] : freq) { freqVec.push_back({ count, val }); }
+    std::sort(freqVec.begin(), freqVec.end(), [](auto &a, auto &b) {
+        if (a.first == b.first) { return a.second > b.second; }
+        return a.first > b.first;
+    });
+
+    std::vector<int> ranksDesc;
+    for (auto &[val, count] : freq) {
+        for (int i = 0; i < count; i++) { ranksDesc.push_back(val); }
     }
+    std::sort(ranksDesc.begin(), ranksDesc.end(), std::greater<int>());
 
-    bool hasFourOfAKind = false;
-    bool hasThreeOfAKind = false;
-    int fourOfAKindRank = 0;
-    int threeOfAKindRank = 0;
-    std::vector<int> pairs, kickers;
+    auto pickKickers = [&](const std::initializer_list<int> &used, int howMany) {
+        std::vector<int> picked;
+        for (int r : ranksDesc) {
+            if (std::find(used.begin(), used.end(), r) != used.end()) {
+                continue;// skip ranks we've used in the main combo
+            }
+            picked.push_back(r);
+            if ((int)picked.size() == howMany) { break; }
+        }
+        return picked;
+    };
 
-    for (const auto &[rank, count] : rankFrequency) {
-        if (count == 4) {
-            hasFourOfAKind = true;
-            fourOfAKindRank = rank;
-        } else if (count == 3) {
-            hasThreeOfAKind = true;
-            threeOfAKindRank = rank;
-        } else if (count == 2) {
-            pairs.push_back(rank);
-        } else {
-            kickers.push_back(rank);
+    auto getFlushCards = [&]() {
+        std::vector<int> fCards;
+        for (auto &c : allCards) {
+            if (c.getSuit() == flushSuit) { fCards.push_back(c.getValue()); }
+        }
+        std::sort(fCards.begin(), fCards.end(), std::greater<int>());
+        if (fCards.size() > 5) { fCards.resize(5); }
+        return fCards;
+    };
+
+    // c0/r0 is the top frequency + rank, c1/r1 the second
+    int c0 = freqVec[0].first;
+    int r0 = freqVec[0].second;
+    int c1 = (freqVec.size() > 1) ? freqVec[1].first : 0;
+    int r1 = (freqVec.size() > 1) ? freqVec[1].second : 0;
+
+    // Royal / Straight Flush
+    if (hasFlush) {
+        auto flushCards = getFlushCards();
+        int flushStraightHighCard = 0;
+        bool flushHasStraight = isStraight(flushCards, flushStraightHighCard);
+
+        if (flushHasStraight) {
+            result.rank = (flushStraightHighCard == 14) ? ROYAL_FLUSH : STRAIGHT_FLUSH;
+            result.identifier = { flushStraightHighCard };
+            return result;
         }
     }
 
-    std::sort(pairs.rbegin(), pairs.rend());
-    std::sort(kickers.rbegin(), kickers.rend());
 
-    if (hasFourOfAKind) {
+    // Quads
+    if (c0 == 4) {
         result.rank = FOUR_OF_A_KIND;
-        result.identifier = { fourOfAKindRank };
-        result.highCards = { kickers[0] };
+        result.identifier = { r0 };
+        result.highCards = pickKickers({ r0 }, 1);
         return result;
     }
 
-    if (hasThreeOfAKind && !pairs.empty()) {
+    // Full house
+    if (c0 == 3 && c1 >= 2) {
         result.rank = FULL_HOUSE;
-        result.identifier = { threeOfAKindRank, pairs[0] };
+        result.identifier = { r0, r1 };
         return result;
     }
 
-    if (flush) {
+    // Flush
+    if (hasFlush) {
         result.rank = FLUSH;
-        result.highCards = {};
-        for (const auto &[rank, count] : rankFrequency) {
-            result.highCards.push_back(rank);
-            if (result.highCards.size() == 5) break;
-        }
-        std::sort(result.highCards.rbegin(), result.highCards.rend());
-        result.identifier = { result.highCards[0] };
+        auto fCards = getFlushCards();
+        result.identifier = { fCards[0] };
+        result.highCards.insert(result.highCards.end(), fCards.begin(), fCards.end());
         return result;
     }
 
-    if (straight) {
+    // Straight
+    if (hasStraight) {
         result.rank = STRAIGHT;
-        result.highCards = { kickers[0], kickers[1], kickers[2], kickers[3], kickers[4] };
-        result.identifier = { highCard };
+        result.identifier = { topStraightRank };
         return result;
     }
 
-    if (hasThreeOfAKind) {
+    // Trips
+    if (c0 == 3) {
         result.rank = THREE_OF_A_KIND;
-        result.identifier = { threeOfAKindRank };
-        result.highCards = { kickers[0], kickers[1] };
+        result.identifier = { r0 };
+        // pick 2 kickers
+        result.highCards = pickKickers({ r0 }, 2);
         return result;
     }
 
-    if (pairs.size() >= 2) {
+    // Two pair
+    if (c0 == 2 && c1 == 2) {
         result.rank = TWO_PAIR;
-        result.identifier = { pairs[0], pairs[1] };
-
-        if (pairs.size() == 3) {
-            result.highCards = (kickers[0] != pairs[0] && kickers[0] != pairs[1] && kickers[0] > pairs[2])
-                                 ? std::vector<int>{ kickers[0] }
-                                 : std::vector<int>{ pairs[2] };
-        } else {
-            result.highCards = { kickers[0] };
-        }
-
+        result.identifier = { r0, r1 };
+        result.highCards = pickKickers({ r0, r1 }, 1);
         return result;
     }
 
-
-    if (pairs.size() == 1) {
+    // Pair
+    if (c0 == 2) {
         result.rank = ONE_PAIR;
-        result.identifier = { pairs[0] };
-        result.highCards = { kickers[0], kickers[1], kickers[2] };
+        result.identifier = { r0 };
+        result.highCards = pickKickers({ r0 }, 3);
         return result;
     }
 
+    // High card
     result.rank = HIGH_CARD;
-    result.identifier = { kickers[0] };
-    result.highCards = { kickers[1], kickers[2], kickers[3], kickers[4] };
+    if (!ranksDesc.empty()) { result.identifier.push_back(ranksDesc[0]); }
+    for (size_t i = 1; i < ranksDesc.size() && result.highCards.size() < 4; ++i) {
+        result.highCards.push_back(ranksDesc[i]);
+    }
     return result;
 }
 
@@ -214,10 +259,5 @@ HandEvaluator::HandResult HandEvaluator::evaluateHand(const std::vector<Card> &h
   const std::vector<Card> &communityCards)
 {
     std::vector<Card> fullHand = mergeHand(hand, communityCards);
-    bool flush = isFlush(fullHand);
-    int highCard = 0;
-    bool straight = isStraight(fullHand, highCard);
-    auto rankFrequency = getRankFrequency(fullHand);
-
-    return determineBestHand(rankFrequency, flush, straight, highCard);
+    return determineBestHand(fullHand);
 }

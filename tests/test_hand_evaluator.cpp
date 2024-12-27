@@ -2,11 +2,13 @@
 #include "HandEvaluator.hpp"
 #include <gtest/gtest.h>
 
+using cardVec = std::vector<Card>;
+
 TEST(HandEvaluatorTest, RoyalFlush)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("T", "Hearts"), Card("J", "Hearts") };
-    std::vector<Card> communityCards = { Card("Q", "Hearts"), Card("K", "Hearts"), Card("A", "Hearts") };
+    cardVec hand = { Card("T", "Hearts"), Card("J", "Hearts") };
+    cardVec communityCards = { Card("Q", "Hearts"), Card("K", "Hearts"), Card("A", "Hearts") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::ROYAL_FLUSH);
@@ -16,19 +18,33 @@ TEST(HandEvaluatorTest, RoyalFlush)
 TEST(HandEvaluatorTest, StraightFlush)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("9", "Clubs"), Card("T", "Clubs") };
-    std::vector<Card> communityCards = { Card("J", "Clubs"), Card("Q", "Clubs"), Card("K", "Clubs") };
+    cardVec hand = { Card("9", "Clubs"), Card("T", "Clubs") };
+    cardVec communityCards = { Card("J", "Clubs"), Card("Q", "Clubs"), Card("K", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT_FLUSH);
     EXPECT_EQ(result.highCards[0], 13);
 }
 
+TEST(HandEvaluatorTest, QuadsOverQuads)
+{
+    HandEvaluator evaluator;
+    cardVec hand1 = { Card("9", "Clubs"), Card("9", "Diamonds") };
+    cardVec hand2 = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    cardVec communityCards = { Card("9", "Hearts"), Card("9", "Spades"), Card("10", "Hearts"), Card("10", "Spades") };
+
+    auto result1 = evaluator.evaluateHand(hand1, communityCards);
+    auto result2 = evaluator.evaluateHand(hand2, communityCards);
+
+    EXPECT_EQ(result1 == result2, false);
+    EXPECT_EQ(result1 > result2, false);
+}
+
 TEST(HandEvaluatorTest, FourOfAKind)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("9", "Clubs"), Card("9", "Diamonds") };
-    std::vector<Card> communityCards = { Card("9", "Hearts"), Card("9", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card("9", "Clubs"), Card("9", "Diamonds") };
+    cardVec communityCards = { Card("9", "Hearts"), Card("9", "Spades"), Card("K", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
 
@@ -40,8 +56,8 @@ TEST(HandEvaluatorTest, FourOfAKind)
 TEST(HandEvaluatorTest, FullHouse)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
-    std::vector<Card> communityCards = { Card("T", "Hearts"), Card("J", "Spades"), Card("J", "Clubs") };
+    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
+    cardVec communityCards = { Card("T", "Hearts"), Card("J", "Spades"), Card("J", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FULL_HOUSE);
@@ -53,8 +69,8 @@ TEST(HandEvaluatorTest, FullHouse)
 TEST(HandEvaluatorTest, Flush)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("2", "Hearts"), Card("5", "Hearts") };
-    std::vector<Card> communityCards = { Card("9", "Hearts"), Card("J", "Hearts"), Card("K", "Hearts") };
+    cardVec hand = { Card("2", "Hearts"), Card("5", "Hearts") };
+    cardVec communityCards = { Card("9", "Hearts"), Card("J", "Hearts"), Card("K", "Hearts") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::FLUSH);
@@ -70,8 +86,8 @@ TEST(HandEvaluatorTest, Flush)
 TEST(HandEvaluatorTest, Straight)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("2", "Diamonds"), Card("3", "Clubs") };
-    std::vector<Card> communityCards = { Card("4", "Hearts"), Card("5", "Spades"), Card("6", "Clubs") };
+    cardVec hand = { Card("2", "Diamonds"), Card("3", "Clubs") };
+    cardVec communityCards = { Card("4", "Hearts"), Card("5", "Spades"), Card("6", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
@@ -81,8 +97,8 @@ TEST(HandEvaluatorTest, Straight)
 TEST(HandEvaluatorTest, ThreeOfAKind)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
-    std::vector<Card> communityCards = { Card("T", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
+    cardVec communityCards = { Card("T", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::THREE_OF_A_KIND);
@@ -94,8 +110,8 @@ TEST(HandEvaluatorTest, ThreeOfAKind)
 TEST(HandEvaluatorTest, TwoPair)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
-    std::vector<Card> communityCards = { Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
+    cardVec communityCards = { Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
@@ -107,8 +123,8 @@ TEST(HandEvaluatorTest, TwoPair)
 TEST(HandEvaluatorTest, TwoPairCounterfeited)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
-    std::vector<Card> communityCards = {
+    cardVec hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    cardVec communityCards = {
         Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs"), Card("K", "Hearts"), Card("8", "Clubs")
     };
 
@@ -122,8 +138,8 @@ TEST(HandEvaluatorTest, TwoPairCounterfeited)
 TEST(HandEvaluatorTest, OnePair)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
-    std::vector<Card> communityCards = { Card("J", "Hearts"), Card("Q", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    cardVec communityCards = { Card("J", "Hearts"), Card("Q", "Spades"), Card("K", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::ONE_PAIR);
@@ -136,8 +152,8 @@ TEST(HandEvaluatorTest, OnePair)
 TEST(HandEvaluatorTest, HighCard)
 {
     HandEvaluator evaluator;
-    std::vector<Card> hand = { Card("2", "Diamonds"), Card("5", "Clubs") };
-    std::vector<Card> communityCards = { Card("7", "Hearts"), Card("9", "Spades"), Card("J", "Clubs") };
+    cardVec hand = { Card("2", "Diamonds"), Card("5", "Clubs") };
+    cardVec communityCards = { Card("7", "Hearts"), Card("9", "Spades"), Card("J", "Clubs") };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::HIGH_CARD);
