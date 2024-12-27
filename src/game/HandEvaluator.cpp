@@ -31,25 +31,17 @@ static std::string rankToString(HandEvaluator::HandRank rank)
 
 bool HandEvaluator::HandResult::operator==(const HandResult &other) const
 {
-    return (rank == other.rank && identifier == other.identifier);
+    return rank == other.rank && identifier == other.identifier && highCards == other.highCards;
 }
 
 bool HandEvaluator::HandResult::operator>(const HandResult &other) const
 {
-    if (*this == other) { return false; }
-    if (rank > other.rank) {
-        return true;
-    } else if (rank < other.rank) {
-        return false;
-    }
-    for (size_t i = 0; i < identifier.size() && i < other.identifier.size(); ++i) {
-        if (identifier[i] > other.identifier[i]) {
-            return true;
-        } else if (identifier[i] < other.identifier[i]) {
-            return false;
-        }
-    }
-    throw std::logic_error("Identifier vector not same length, shouldn't happen!");
+    if (rank > other.rank) { return true; }
+    if (rank < other.rank) { return false; }
+
+    // Apparently > operation on vectors compare lexicographically
+    if (identifier != other.identifier) { return identifier > other.identifier; }
+    return highCards > other.highCards;
 }
 
 bool HandEvaluator::HandResult::operator<(const HandResult &other) const
