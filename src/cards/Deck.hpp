@@ -12,7 +12,7 @@ class Deck
   public:
     Deck();
     Card popTop();
-    void shuffle(bool includeRemoved = true);
+    void shuffle();
     bool isEmpty() const;
     int getLength() const;
 };

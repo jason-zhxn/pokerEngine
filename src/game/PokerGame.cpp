@@ -1,198 +1,150 @@
 #include "PokerGame.hpp"
+#include "BettingRound.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
 
-PokerGame::PokerGame() : pot(0), currentBet(0)
+PokerGame::PokerGame() : pot(0), currentBet(0), playerIsDealer(true)
 {
     deck = std::make_unique<Deck>();
-    deck->shuffle();
-    players.push_back(std::make_unique<Player>("Hero", 100, false));
-    players.push_back(std::make_unique<Player>("Villain", 100, true));
+    player = std::make_unique<Player>("Hero", 100.0);
+    bot = std::make_unique<Bot>("Villain", 100.0);
 }
 
 void PokerGame::playGame()
 {
     while (true) {
         resetGameState();
+        collectBlinds();
         dealHoleCards();
+
         preflop();
-        executeBettingRound();
         flop();
-        executeBettingRound();
         turn();
-        executeBettingRound();
         river();
-        executeBettingRound();
         payout();
 
-        if (players[0]->getChips() == 0 || players[1]->getChips() == 0) {
-            std::cout << "Game over!";
-            if (players[0]->getChips() > 0)
-                std::cout << players[0]->getName() << " wins the game!" << std::endl;
+        if (player->getChips() == 0 || bot->getChips() == 0) {
+            std::cout << "Game over!\n";
+            if (bot->getChips() > 0)
+                std::cout << bot->getName() << " wins the game!\n";
             else
-                std::cout << players[1]->getName() << " wins the game!" << std::endl;
+                std::cout << player->getName() << " wins the game!\n";
             break;
         }
+
+        shiftDealerButton();
     }
 }
 
-void PokerGame::preflop()
+void PokerGame::resetGameState()
 {
-    std::cout << "=== Preflop ===" << std::endl;
+    pot = 0;
+    currentBet = 0;
+    communityCards.clear();
+    deck->shuffle();
+    player->reset();
+    bot->reset();
+    std::cout << "=== Starting a new round ===\n";
 }
 
-void PokerGame::flop()
+void PokerGame::collectBlinds()
 {
-    std::cout << "=== Flop ===" << std::endl;
-    dealCommunityCards(3);
+    double smallBlind = 0.5;
+    double bigBlind = 1;
+
+    if (playerIsDealer) {
+        player->deductChips(smallBlind);
+        bot->deductChips(bigBlind);
+        pot += smallBlind + bigBlind;
+        currentBet = bigBlind;
+        std::cout << player->getName() << " posts the small blind of " << smallBlind << " chips.\n";
+        std::cout << bot->getName() << " posts the big blind of " << bigBlind << " chips.\n";
+    } else {
+        bot->deductChips(smallBlind);
+        player->deductChips(bigBlind);
+        pot += smallBlind + bigBlind;
+        currentBet = bigBlind;
+        std::cout << bot->getName() << " posts the small blind of " << smallBlind << " chips.\n";
+        std::cout << player->getName() << " posts the big blind of " << bigBlind << " chips.\n";
+    }
 }
 
-void PokerGame::turn()
+void PokerGame::shiftDealerButton()
 {
-    std::cout << "=== Turn ===" << std::endl;
-    dealCommunityCards(1);
-}
-
-void PokerGame::river()
-{
-    std::cout << "=== River ===" << std::endl;
-    dealCommunityCards(1);
+    playerIsDealer = !playerIsDealer;
+    std::cout << "Dealer button is now with " << (playerIsDealer ? player->getName() : bot->getName()) << ".\n";
 }
 
 void PokerGame::dealHoleCards()
 {
-    for (auto &playerPtr : players) {
-        Player &player = *playerPtr;
-        std::vector<Card> hole_cards;
-        hole_cards.push_back(deck->popTop());
-        hole_cards.push_back(deck->popTop());
-        player.setHand(hole_cards);
+    player->setHand({ deck->popTop(), deck->popTop() });
+    bot->setHand({ deck->popTop(), deck->popTop() });
 
-        if (player.getName() == "Hero") {
-            std::cout << "Your hole cards: ";
-            std::vector<Card> hero_hand = player.getHand();
-            std::cout << hero_hand[0].toString() << " " << hero_hand[1].toString() << std::endl;
-        }
-    }
+    std::cout << "Your hole cards: " << player->getHand()[0].toString() << " " << player->getHand()[1].toString()
+              << "\n";
 }
 
 void PokerGame::dealCommunityCards(int numCards)
 {
-    for (int i = 0; i < numCards; i++) {
+    for (int i = 0; i < numCards; ++i) {
         Card card = deck->popTop();
         communityCards.push_back(card);
-        std::cout << "Community card dealt: " << card.toString() << std::endl;
+        std::cout << "Community card dealt: " << card.toString() << "\n";
     }
 }
 
-void PokerGame::executeBettingRound()
+void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
 {
-    std::cout << "=== Betting Round ===" << std::endl;
+    std::cout << "=== " << phaseName << " ===\n";
+    if (numCommunityCards > 0) dealCommunityCards(numCommunityCards);
+    executeBettingRound(*this);
+}
 
-    int activePlayer = (dealerIndex + 1) % players.size();
-    int lastToAct = dealerIndex;
-    bool bettingComplete = false;
+void PokerGame::preflop()
+{
+    handlePhase("Preflop");
+}
 
-    int highestBet = 0;
-    while (!bettingComplete) {
-        Player &player = *players[activePlayer];
+void PokerGame::flop()
+{
+    handlePhase("Flop", 3);
+}
 
-        if (player.isActive()) {
-            std::cout << player.getName() << "'s turn. Current bet: " << highestBet
-                      << ", your chips: " << player.getChips() << std::endl;
+void PokerGame::turn()
+{
+    handlePhase("Turn", 1);
+}
 
-            std::cout << "Enter your action (fold, call, raise): ";
-            std::string action;
-            std::cin >> action;
-
-            if (action == "fold") {
-                player.fold();
-                std::cout << player.getName() << " folds." << std::endl;
-            } else if (action == "call") {
-                int amountToCall = highestBet - player.getCurrentBet();
-                if (amountToCall > player.getChips()) { amountToCall = player.getChips(); }
-                player.deductChips(amountToCall);
-                pot += amountToCall;
-                player.setCurrentBet(highestBet);
-                std::cout << player.getName() << " calls with " << amountToCall << " chips." << std::endl;
-            } else if (action == "raise") {
-                int raiseAmount;
-                std::cout << "Enter raise amount: ";
-                std::cin >> raiseAmount;
-
-                int totalBet = highestBet + raiseAmount;
-                if (totalBet > player.getChips()) { totalBet = player.getChips(); }
-                highestBet = totalBet;
-                player.deductChips(totalBet - player.getCurrentBet());
-                pot += totalBet - player.getCurrentBet();
-                player.setCurrentBet(totalBet);
-                std::cout << player.getName() << " raises to " << highestBet << " chips." << std::endl;
-            } else {
-                std::cout << "Invalid action. Please try again." << std::endl;
-                continue;
-            }
-        }
-
-        activePlayer = (activePlayer + 1) % players.size();
-        if (activePlayer == lastToAct) { bettingComplete = true; }
-    }
-
-    for (auto &playerPtr : players) { playerPtr->setCurrentBet(0); }
+void PokerGame::river()
+{
+    handlePhase("River", 1);
 }
 
 void PokerGame::payout()
 {
     HandEvaluator evaluator;
 
-    HandEvaluator::HandResult heroResult = evaluator.evaluateHand(players[0]->getHand(), communityCards);
-    HandEvaluator::HandResult villainResult = evaluator.evaluateHand(players[1]->getHand(), communityCards);
+    auto heroResult = evaluator.evaluateHand(player->getHand(), communityCards);
+    auto villainResult = evaluator.evaluateHand(bot->getHand(), communityCards);
 
-    std::cout << players[0]->getName() << "'s hand: " << heroResult.rank << " with high cards: ";
-    for (const auto &card : heroResult.highCards) { std::cout << card << " "; }
-    std::cout << std::endl;
-
-    std::cout << players[1]->getName() << "'s hand: " << villainResult.rank << " with high cards: ";
-    for (const auto &card : villainResult.highCards) { std::cout << card << " "; }
-    std::cout << std::endl;
-
-    if (heroResult.rank > villainResult.rank) {
-        std::cout << players[0]->getName() << " wins the pot of " << pot << " chips!" << std::endl;
-        players[0]->addChips(pot);
-    } else if (heroResult.rank < villainResult.rank) {
-        std::cout << players[1]->getName() << " wins the pot of " << pot << " chips!" << std::endl;
-        players[1]->addChips(pot);
+    if (heroResult == villainResult) {
+        player->addChips(pot / 2);
+        bot->addChips(pot / 2);
+        std::cout << "It's a tie! Pot is split.\n";
+    } else if (heroResult > villainResult) {
+        player->addChips(pot);
+        std::cout << player->getName() << " wins the pot of " << pot << " chips!\n";
     } else {
-        std::cout << "Both players have the same hand rank. Checking high cards..." << std::endl;
-        if (heroResult.highCards > villainResult.highCards) {
-            std::cout << players[0]->getName() << " wins the pot of " << pot << " chips!" << std::endl;
-            players[0]->addChips(pot);
-        } else if (heroResult.highCards < villainResult.highCards) {
-            std::cout << players[1]->getName() << " wins the pot of " << pot << " chips!" << std::endl;
-            players[1]->addChips(pot);
-        } else {
-            std::cout << "It's a tie! The pot of " << pot << " chips is split." << std::endl;
-            players[0]->addChips(pot / 2);
-            players[1]->addChips(pot / 2);
-        }
+        bot->addChips(pot);
+        std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
     }
-    pot = 0;
-}
 
-void PokerGame::resetGameState()
-{
-    dealerIndex = (dealerIndex + 1) % players.size();
-    pot = 0;
-    currentBet = 0;
-    communityCards.clear();
-    deck->shuffle();
-    for (auto &playerPtr : players) { playerPtr->reset(); }
-    std::cout << "=== Starting a new round ===" << std::endl;
-    dealerIndex = (dealerIndex + 1) % players.size();
-    std::cout << "Dealer button is now with " << players[dealerIndex]->getName() << std::endl;
-}
+    std::cout << "Villain's hole cards were: " << bot->getHand()[0].toString() << " " << bot->getHand()[1].toString()
+              << "\n";
 
-void PokerGame::clearConsole() const
-{
-    system("clear");
+    std::cout << player->getName() << "'s hand: " << heroResult.toString() << "\n";
+    std::cout << bot->getName() << "'s hand: " << villainResult.toString() << "\n";
+
+    pot = 0;
 }
