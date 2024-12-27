@@ -211,10 +211,10 @@ TEST(HandEvaluatorTest, TwoPairsWithDifferentKickers)
         Card("K", "Hearts"), Card("7", "Diamonds"), Card("3", "Clubs"), Card("3", "Spades"), Card("2", "Hearts")
     };
 
-    // KK77A
+    // Ace Kicker
     cardVec hand1 = { Card("K", "Diamonds"), Card("A", "Clubs") };
 
-    // KK77Q
+    // Queen Kicker
     cardVec hand2 = { Card("K", "Clubs"), Card("Q", "Spades") };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
@@ -224,4 +224,76 @@ TEST(HandEvaluatorTest, TwoPairsWithDifferentKickers)
     EXPECT_EQ(result2.rank, HandEvaluator::TWO_PAIR);
 
     EXPECT_GT(result1, result2);
+}
+
+TEST(HandEvaluatorTest, FullHouseTripsTiebreaker)
+{
+    HandEvaluator evaluator;
+
+    cardVec communityCards = {
+        Card("Q", "Clubs"), Card("J", "Spades"), Card("J", "Diamonds"), Card("4", "Hearts"), Card("2", "Clubs")
+    };
+
+    // Queens over Jacks
+    cardVec hand1 = { Card("Q", "Hearts"), Card("Q", "Diamonds") };
+
+    // Jacks over Queens
+    cardVec hand2 = { Card("J", "Clubs"), Card("Q", "Diamonds") };
+
+    auto result1 = evaluator.evaluateHand(hand1, communityCards);
+    auto result2 = evaluator.evaluateHand(hand2, communityCards);
+
+    EXPECT_EQ(result1.rank, HandEvaluator::FULL_HOUSE);
+    EXPECT_EQ(result2.rank, HandEvaluator::FULL_HOUSE);
+
+    EXPECT_GT(result1, result2);
+}
+
+TEST(HandEvaluatorTest, FullHousePairTiebreaker)
+{
+    HandEvaluator evaluator;
+
+    cardVec communityCards = {
+        Card("Q", "Clubs"), Card("Q", "Spades"), Card("9", "Diamonds"), Card("7", "Hearts"), Card("2", "Clubs")
+    };
+
+    // Queens over Nines
+    cardVec hand1 = { Card("9", "Hearts"), Card("Q", "Diamonds") };
+
+    // Queens over Sevens
+    cardVec hand2 = { Card("Q", "Hearts"), Card("7", "Spades") };
+
+    auto result1 = evaluator.evaluateHand(hand1, communityCards);
+    auto result2 = evaluator.evaluateHand(hand2, communityCards);
+
+    EXPECT_EQ(result1.rank, HandEvaluator::FULL_HOUSE);
+    EXPECT_EQ(result2.rank, HandEvaluator::FULL_HOUSE);
+
+    EXPECT_GT(result1, result2);
+}
+
+TEST(HandEvaluatorTest, FlushTiebreaker)
+{
+    HandEvaluator evaluator;
+
+    cardVec communityCards = {
+        Card("A", "Hearts"), Card("K", "Hearts"), Card("7", "Hearts"), Card("6", "Diamonds"), Card("2", "Spades")
+    };
+
+    // Tiebreaker card is 4
+    cardVec hand1 = { Card("3", "Hearts"), Card("4", "Hearts") };
+
+    // Tiebreaker card is 5
+    cardVec hand2 = { Card("2", "Hearts"), Card("5", "Hearts") };
+
+    auto result1 = evaluator.evaluateHand(hand1, communityCards);
+    auto result2 = evaluator.evaluateHand(hand2, communityCards);
+
+    ASSERT_FALSE(result1.identifier.empty());
+    ASSERT_FALSE(result2.identifier.empty());
+
+    EXPECT_EQ(result1.rank, HandEvaluator::FLUSH);
+    EXPECT_EQ(result2.rank, HandEvaluator::FLUSH);
+
+    EXPECT_LT(result1, result2);
 }
