@@ -114,14 +114,12 @@ HandEvaluator::HandResult HandEvaluator::determineBestHand(const std::vector<Car
     std::vector<int> ranks;
     ranks.reserve(allCards.size());
     for (auto &c : allCards) { ranks.push_back(c.getValue()); }
-    std::sort(ranks.begin(), ranks.end());
-    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end());
 
     int topStraightRank = 0;
     bool hasStraight = isStraight(ranks, topStraightRank);
 
     std::map<int, int> freq;
-    for (auto &c : allCards) { freq[c.getValue()]++; }
+    for (int r : ranks) { freq[r]++; }
     // Sort them by (count DESC, rank DESC)
     std::vector<std::pair<int, int>> freqVec;
     freqVec.reserve(freq.size());
