@@ -127,7 +127,37 @@ TEST(HandEvaluatorTest, Straight)
     ASSERT_FALSE(result.identifier.empty()) << "Identifier should not be empty for Straight";
 
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
-    EXPECT_EQ(result.identifier[0], 6);
+    EXPECT_EQ(result.identifier[0], 7);
+}
+
+TEST(HandEvaluatorTest, AceHighStraight)
+{
+    HandEvaluator evaluator;
+    cardVec hand = { Card("A", "Diamonds"), Card("2", "Clubs") };
+    cardVec communityCards = {
+        Card("K", "Hearts"), Card("Q", "Spades"), Card("10", "Clubs"), Card("3", "Hearts"), Card("J", "Diamonds")
+    };
+
+    auto result = evaluator.evaluateHand(hand, communityCards);
+    ASSERT_FALSE(result.identifier.empty()) << "Identifier should not be empty for Straight";
+
+    EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
+    EXPECT_EQ(result.identifier[0], 14);
+}
+
+TEST(HandEvaluatorTest, AceLowStraight)
+{
+    HandEvaluator evaluator;
+    cardVec hand = { Card("2", "Diamonds"), Card("A", "Clubs") };
+    cardVec communityCards = {
+        Card("4", "Hearts"), Card("5", "Spades"), Card("3", "Clubs"), Card("K", "Hearts"), Card("7", "Diamonds")
+    };
+
+    auto result = evaluator.evaluateHand(hand, communityCards);
+    ASSERT_FALSE(result.identifier.empty()) << "Identifier should not be empty for Straight";
+
+    EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT);
+    EXPECT_EQ(result.identifier[0], 5);
 }
 
 TEST(HandEvaluatorTest, ThreeOfAKind)

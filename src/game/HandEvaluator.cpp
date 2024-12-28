@@ -87,19 +87,18 @@ bool HandEvaluator::isStraight(const std::vector<int> &ranks, int &highCard)
 {
     if (ranks.size() < 5) { return false; }
 
-    std::vector<int> sorted = ranks;
-    std::sort(sorted.begin(), sorted.end());
-    sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
-
-    if (std::find(sorted.begin(), sorted.end(), 14) != sorted.end()) {
+    std::vector<int> sorted(ranks.begin(), ranks.end());
+    
+    std::sort(sorted.begin(), sorted.end(), std::greater<int>());
+    if (sorted[0] == 14) {
         sorted.push_back(1);
-        std::sort(sorted.begin(), sorted.end());
-        sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
     }
 
+    sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
+
     for (size_t i = 0; i + 4 < sorted.size(); ++i) {
-        if (sorted[i + 4] - sorted[i] == 4) {
-            highCard = sorted[i + 4];
+        if (sorted[i] - sorted[i + 4] == 4) {
+            highCard = sorted[i];
             return true;
         }
     }
