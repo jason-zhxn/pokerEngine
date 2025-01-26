@@ -103,7 +103,7 @@ void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
 
 void PokerGame::preflop()
 {
-    handlePhase("Preflop");
+    handlePhase("Preflop", 0); // second arg missing
 }
 
 void PokerGame::flop()
