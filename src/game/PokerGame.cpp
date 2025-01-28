@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 PokerGame::PokerGame() : pot(0), currentBet(0), playerIsDealer(true)
 {
@@ -15,14 +16,47 @@ void PokerGame::playGame()
 {
     while (true) {
         resetGameState();
+
+        std::string play_again;
+        std::cout << "Play another? (y / n): ";
+        std:: cin >> play_again;
+
+        if (play_again == "n" || play_again == "no" || play_again == "exit" || play_again == "q"){
+            int pnl = player->getChips() - 100.0;
+            if (pnl < 0){
+                std::cout << "Villain: Couldn\'t handle the heat! PnL: " << pnl << std::endl; 
+            } else if (pnl ==  0){
+                std::cout << "Villain: Broke even... No time for a bomb pot? PnL: " << pnl << std::endl; 
+            } else {
+                std::cout << "Villain: Leaving so soon? Bad manners if you ask me... PnL: " << pnl << std::endl;
+            }
+            exit(0);
+        }
+
         collectBlinds();
         dealHoleCards();
 
         preflop();
-        flop();
-        turn();
-        river();
-        payout();
+        if (player->isActive() && bot->isActive()){
+            flop();
+        }
+        if (player->isActive() && bot->isActive()){
+            turn();
+        }
+        if (player->isActive() && bot->isActive()){
+            river();
+        }
+        if (player->isActive() && bot->isActive()){
+            payout();
+        } else if (!player->isActive()) {
+            bot->addChips(pot);
+            std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
+        } else if (!bot->isActive()){
+            player->addChips(pot);
+            std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
+        } else {
+            throw std::runtime_error("Invalid folding logic. Time to debug.");
+        }
 
         if (player->getChips() == 0 || bot->getChips() == 0) {
             std::cout << "Game over!\n";

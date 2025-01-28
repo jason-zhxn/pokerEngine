@@ -1,6 +1,7 @@
 #include "BettingRound.hpp"
 #include <iostream>
 #include <string>
+#include <limits>
 
 void executeBettingRound(PokerGame &game)
 {
@@ -24,21 +25,30 @@ void executeBettingRound(PokerGame &game)
                 std::string action;
                 std::cin >> action;
 
-                if (action == "fold") {
+                if (action == "fold" || action == "f") {
                     currentPlayer->fold();
                     std::cout << currentPlayer->getName() << " folds." << std::endl;
-                    break;
-                } else if (action == "call") {
+                    return;
+                } else if (action == "call" || action == "c") {
                     int amountToCall = highestBet - currentPlayer->getCurrentBet();
                     if (amountToCall > currentPlayer->getChips()) { amountToCall = currentPlayer->getChips(); }
                     currentPlayer->deductChips(amountToCall);
                     game.pot += amountToCall;
                     currentPlayer->setCurrentBet(highestBet);
                     std::cout << currentPlayer->getName() << " calls with " << amountToCall << " chips." << std::endl;
-                } else if (action == "raise") {
-                    int raiseAmount;
+                } else if (action == "raise" || action == "r") {
+                    double raiseAmount = 0;
+
                     std::cout << "Enter raise amount: ";
                     std::cin >> raiseAmount;
+
+                    while (std::cin.fail() || raiseAmount <= 0){
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Invalid raise amount. Please try again." << std::endl;
+                        std::cout << "Enter raise amount: ";
+                        std::cin >> raiseAmount;
+                    }
 
                     int totalBet = highestBet + raiseAmount;
                     if (totalBet > currentPlayer->getChips()) { totalBet = currentPlayer->getChips(); }
