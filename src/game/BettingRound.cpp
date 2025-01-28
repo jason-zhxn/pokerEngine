@@ -15,11 +15,8 @@ void executeBettingRound(PokerGame &game)
     int highestBet = game.currentBet;
 
     while (!bettingComplete) {
-        std::cout << "Eureka! 6" << std::endl;
         if (currentPlayer->isActive()) {
-            std::cout << "Eureka! 5" << std::endl;
             if (currentPlayer == game.player.get()) {
-                std::cout << "Eureka! 4" << std::endl;
                 std::cout << currentPlayer->getName() << "'s turn. Current bet: " << highestBet
                           << ", your chips: " << currentPlayer->getChips() << std::endl;
 
@@ -55,18 +52,13 @@ void executeBettingRound(PokerGame &game)
                     continue;
                 }
             } else {
-                std::cout << "Eureka! 3" << std::endl;
                 game.bot->makeMove(game.pot, highestBet);
-                //bettingComplete = true;
             }
         }
-        std::cout << "Eureka! 2" << std::endl;
+
         std::swap(currentPlayer, opponent);
 
         if (currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) {
-            //if (currentPlayer->getCurrentBet() == 0.5 || opponent->getCurrentBet() == 0.5){
-                std::cout << "Eureka! 1" << std::endl;
-            //}
             bettingComplete = true;
         }
     }
