@@ -68,7 +68,7 @@ void executeBettingRound(PokerGame &game)
 
         std::swap(currentPlayer, opponent);
 
-        if (currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) {
+        if ((currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) || !opponent->isActive() || !currentPlayer->isActive()) {
             bettingComplete = true;
         }
     }
