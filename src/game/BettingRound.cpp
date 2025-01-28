@@ -1,7 +1,7 @@
 #include "BettingRound.hpp"
 #include <iostream>
-#include <string>
 #include <limits>
+#include <string>
 
 void executeBettingRound(PokerGame &game)
 {
@@ -42,7 +42,7 @@ void executeBettingRound(PokerGame &game)
                     std::cout << "Enter raise amount: ";
                     std::cin >> raiseAmount;
 
-                    while (std::cin.fail() || raiseAmount <= 0){
+                    while (std::cin.fail() || raiseAmount <= 0) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cout << "Invalid raise amount. Please try again." << std::endl;
@@ -68,7 +68,8 @@ void executeBettingRound(PokerGame &game)
 
         std::swap(currentPlayer, opponent);
 
-        if ((currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) || !opponent->isActive() || !currentPlayer->isActive()) {
+        if ((currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet)
+            || !opponent->isActive() || !currentPlayer->isActive()) {
             bettingComplete = true;
         }
     }

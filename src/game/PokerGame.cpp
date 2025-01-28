@@ -24,11 +24,11 @@ void PokerGame::playGame()
         if (play_again == "n" || play_again == "no" || play_again == "exit" || play_again == "q") {
             int pnl = player->getChips() - 100.0;
             if (pnl < 0) {
-                std::cout << "Villain: Couldn\'t handle the heat! PnL: " << pnl << "\n"; 
+                std::cout << "Villain: Couldn\'t handle the heat! PnL: " << pnl << "\n";
             } else if (pnl == 0) {
-                std::cout << "Villain: Broke even... No time for a bomb pot? PnL: " << pnl << "\n"; 
+                std::cout << "Villain: Broke even... No time for a bomb pot? PnL: " << pnl << "\n";
             } else {
-                std::cout << "Villain: Leaving so soon? Bad manners if you ask me... PnL: " << pnl << "\n";
+                std::cout << "Villain: Leaving so soon? Bad manners if you ask me... PnL: " << pnl << " \n";
             }
             exit(0);
         }
