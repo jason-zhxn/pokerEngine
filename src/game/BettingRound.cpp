@@ -7,16 +7,19 @@ void executeBettingRound(PokerGame &game)
     std::cout << "=== Betting Round ===" << std::endl;
 
     Agent *currentPlayer =
-      game.playerIsDealer ? static_cast<Agent *>(game.bot.get()) : static_cast<Agent *>(game.player.get());
-    Agent *opponent =
       game.playerIsDealer ? static_cast<Agent *>(game.player.get()) : static_cast<Agent *>(game.bot.get());
+    Agent *opponent =
+      game.playerIsDealer ? static_cast<Agent *>(game.bot.get()) : static_cast<Agent *>(game.player.get());
 
     bool bettingComplete = false;
     int highestBet = game.currentBet;
 
     while (!bettingComplete) {
+        std::cout << "Eureka! 6" << std::endl;
         if (currentPlayer->isActive()) {
+            std::cout << "Eureka! 5" << std::endl;
             if (currentPlayer == game.player.get()) {
+                std::cout << "Eureka! 4" << std::endl;
                 std::cout << currentPlayer->getName() << "'s turn. Current bet: " << highestBet
                           << ", your chips: " << currentPlayer->getChips() << std::endl;
 
@@ -52,14 +55,18 @@ void executeBettingRound(PokerGame &game)
                     continue;
                 }
             } else {
-                game.bot->makeMove();
-                bettingComplete = true;
+                std::cout << "Eureka! 3" << std::endl;
+                game.bot->makeMove(game.pot, highestBet);
+                //bettingComplete = true;
             }
         }
-
+        std::cout << "Eureka! 2" << std::endl;
         std::swap(currentPlayer, opponent);
 
         if (currentPlayer->getCurrentBet() == highestBet && opponent->getCurrentBet() == highestBet) {
+            //if (currentPlayer->getCurrentBet() == 0.5 || opponent->getCurrentBet() == 0.5){
+                std::cout << "Eureka! 1" << std::endl;
+            //}
             bettingComplete = true;
         }
     }
