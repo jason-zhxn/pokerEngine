@@ -84,19 +84,23 @@ void PokerGame::collectBlinds()
 
     if (playerIsDealer) {
         player->deductChips(smallBlind);
+        player->setCurrentBet(smallBlind);
         bot->deductChips(bigBlind);
+        bot->setCurrentBet(bigBlind);
         pot += smallBlind + bigBlind;
-        currentBet = bigBlind;
         std::cout << player->getName() << " posts the small blind of " << smallBlind << " chips.\n";
         std::cout << bot->getName() << " posts the big blind of " << bigBlind << " chips.\n";
     } else {
         bot->deductChips(smallBlind);
+        bot->setCurrentBet(smallBlind);
         player->deductChips(bigBlind);
+        player->setCurrentBet(bigBlind);
         pot += smallBlind + bigBlind;
-        currentBet = bigBlind;
         std::cout << bot->getName() << " posts the small blind of " << smallBlind << " chips.\n";
         std::cout << player->getName() << " posts the big blind of " << bigBlind << " chips.\n";
     }
+
+    currentBet = bigBlind;
 }
 
 void PokerGame::shiftDealerButton()
@@ -121,6 +125,16 @@ void PokerGame::dealCommunityCards(int numCards)
         communityCards.push_back(card);
         std::cout << "Community card dealt: " << card.toString() << "\n";
     }
+}
+
+double PokerGame::getCurrentBet()
+{
+    return currentBet;
+}
+
+void PokerGame::setCurrentBet(double newBet)
+{
+    currentBet = newBet;
 }
 
 void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)

@@ -25,6 +25,8 @@ class PokerGame
 
   private:
     friend void executeBettingRound(PokerGame &game);
+    void setCurrentBet(double newBet);
+    double getCurrentBet();
     void resetGameState();
     void collectBlinds();
     void shiftDealerButton();
