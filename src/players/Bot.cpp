@@ -5,7 +5,7 @@ Bot::Bot(const std::string &name, double initialChips) : Agent(name, initialChip
 
 void Bot::makeMove(double &pot, double highestBet)
 {
-    int amountToCall = highestBet - this->getCurrentBet();
+    double amountToCall = highestBet - this->getCurrentBet();
     if (amountToCall > this->getChips()) { amountToCall = this->getChips(); }
     this->deductChips(amountToCall);
     pot += amountToCall;

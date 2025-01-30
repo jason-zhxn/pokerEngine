@@ -60,5 +60,5 @@ cppformat:
 # GDB target
 gdb:
 	$(MAKE) build DEBUG=1
-	cd build/bin && gdb poker_engine_tests
+	cd build/bin && gdb poker_solver
 
