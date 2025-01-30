@@ -22,7 +22,7 @@ void PokerGame::playGame()
         std::cin >> play_again;
 
         if (play_again == "n" || play_again == "no" || play_again == "exit" || play_again == "q") {
-            int pnl = player->getChips() - 100.0;
+            double pnl = player->getChips() - 100.0;
             if (pnl < 0) {
                 std::cout << "Villain: Couldn\'t handle the heat! PnL: " << pnl << "\n";
             } else if (pnl == 0) {

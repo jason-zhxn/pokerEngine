@@ -5,7 +5,8 @@
 
 void executeBettingRound(PokerGame &game)
 {
-    std::cout << "=== Betting Round ===" << std::endl;
+    std::cout << "New Betting Round" << std::endl;
+
 
     Agent *currentPlayer =
       game.playerIsDealer ? static_cast<Agent *>(game.player.get()) : static_cast<Agent *>(game.bot.get());
@@ -13,7 +14,7 @@ void executeBettingRound(PokerGame &game)
       game.playerIsDealer ? static_cast<Agent *>(game.bot.get()) : static_cast<Agent *>(game.player.get());
 
     bool bettingComplete = false;
-    int highestBet = game.currentBet;
+    double highestBet = game.currentBet;
 
     while (!bettingComplete) {
         if (currentPlayer->isActive()) {
