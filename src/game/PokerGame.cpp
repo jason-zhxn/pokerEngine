@@ -137,6 +137,16 @@ void PokerGame::setCurrentBet(double newBet)
     currentBet = newBet;
 }
 
+double PokerGame::getPot()
+{
+    return pot;
+}
+
+void PokerGame::addToPot(double value)
+{
+    pot += value;
+}
+
 void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
 {
     std::cout << "=== " << phaseName << " ===\n";
