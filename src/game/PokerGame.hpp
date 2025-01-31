@@ -22,9 +22,15 @@ class PokerGame
   public:
     PokerGame();
     void playGame();
+    void setCurrentBet(double newBet);
+    double getCurrentBet();
+    double getPot();
+    void addToPot(double value);
+
 
   private:
     friend void executeBettingRound(PokerGame &game);
+    friend void handlePlayerAction(PokerGame &game, Agent *currentPlayer);
     void resetGameState();
     void collectBlinds();
     void shiftDealerButton();

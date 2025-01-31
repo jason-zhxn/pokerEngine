@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 PokerGame::PokerGame() : pot(0), currentBet(0), playerIsDealer(true)
 {
@@ -15,6 +16,23 @@ void PokerGame::playGame()
 {
     while (true) {
         resetGameState();
+
+        std::string play_again;
+        std::cout << "Play another? (y / n): ";
+        std::cin >> play_again;
+
+        if (play_again == "n" || play_again == "no" || play_again == "exit" || play_again == "q") {
+            double pnl = player->getChips() - 100.0;
+            if (pnl < 0) {
+                std::cout << "Villain: Couldn\'t handle the heat! PnL: " << pnl << "\n";
+            } else if (pnl == 0) {
+                std::cout << "Villain: Broke even... No time for a bomb pot? PnL: " << pnl << "\n";
+            } else {
+                std::cout << "Villain: Leaving so soon? Bad manners if you ask me... PnL: " << pnl << " \n";
+            }
+            exit(0);
+        }
+
         collectBlinds();
         dealHoleCards();
 
@@ -22,7 +40,18 @@ void PokerGame::playGame()
         flop();
         turn();
         river();
-        payout();
+
+        if (player->isActive() && bot->isActive()) {
+            payout();
+        } else if (!player->isActive()) {
+            bot->addChips(pot);
+            std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
+        } else if (!bot->isActive()) {
+            player->addChips(pot);
+            std::cout << bot->getName() << " wins the pot of " << pot << " chips!\n";
+        } else {
+            throw std::runtime_error("Invalid folding logic. Time to debug.");
+        }
 
         if (player->getChips() == 0 || bot->getChips() == 0) {
             std::cout << "Game over!\n";
@@ -55,19 +84,23 @@ void PokerGame::collectBlinds()
 
     if (playerIsDealer) {
         player->deductChips(smallBlind);
+        player->setCurrentBet(smallBlind);
         bot->deductChips(bigBlind);
+        bot->setCurrentBet(bigBlind);
         pot += smallBlind + bigBlind;
-        currentBet = bigBlind;
         std::cout << player->getName() << " posts the small blind of " << smallBlind << " chips.\n";
         std::cout << bot->getName() << " posts the big blind of " << bigBlind << " chips.\n";
     } else {
         bot->deductChips(smallBlind);
+        bot->setCurrentBet(smallBlind);
         player->deductChips(bigBlind);
+        player->setCurrentBet(bigBlind);
         pot += smallBlind + bigBlind;
-        currentBet = bigBlind;
         std::cout << bot->getName() << " posts the small blind of " << smallBlind << " chips.\n";
         std::cout << player->getName() << " posts the big blind of " << bigBlind << " chips.\n";
     }
+
+    currentBet = bigBlind;
 }
 
 void PokerGame::shiftDealerButton()
@@ -92,6 +125,26 @@ void PokerGame::dealCommunityCards(int numCards)
         communityCards.push_back(card);
         std::cout << "Community card dealt: " << card.toString() << "\n";
     }
+}
+
+double PokerGame::getCurrentBet()
+{
+    return currentBet;
+}
+
+void PokerGame::setCurrentBet(double newBet)
+{
+    currentBet = newBet;
+}
+
+double PokerGame::getPot()
+{
+    return pot;
+}
+
+void PokerGame::addToPot(double value)
+{
+    pot += value;
 }
 
 void PokerGame::handlePhase(const std::string &phaseName, int numCommunityCards)
