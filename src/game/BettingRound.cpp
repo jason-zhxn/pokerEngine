@@ -9,21 +9,16 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
 
     if (amountToCall == 0) {
         std::string action;
-        std::cout << "Enter your action (check, bet): ";
         std::cin >> action;
 
         if (action == "check" || action == "ch") {
-            std::cout << currentPlayer->getName() << " checks." << std::endl;
         } else if (action == "bet" || action == "b") {
             double raiseAmount = 0;
-            std::cout << "Enter bet amount: ";
             std::cin >> raiseAmount;
 
             while (std::cin.fail() || raiseAmount <= 0) {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Invalid bet amount. Please try again." << std::endl;
-                std::cout << "Enter bet amount: ";
                 std::cin >> raiseAmount;
             }
 
@@ -36,37 +31,29 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
             currentPlayer->setCurrentBet(totalBet);
             game.currentBet = totalBet;
 
-            std::cout << currentPlayer->getName() << " bets " << game.currentBet << " chips." << std::endl;
         } else {
-            std::cout << "Invalid action. Please try again." << std::endl;
             handlePlayerAction(game, currentPlayer);
         }
 
     } else {
         std::string action;
-        std::cout << "Enter your action (fold, call, raise): ";
         std::cin >> action;
 
         if (action == "fold" || action == "f") {
             currentPlayer->fold();
-            std::cout << currentPlayer->getName() << " folds." << std::endl;
             return;
         } else if (action == "call" || action == "c") {
             if (amountToCall > currentPlayer->getChips()) { amountToCall = currentPlayer->getChips(); }
             currentPlayer->deductChips(amountToCall);
             game.pot += amountToCall;
             currentPlayer->setCurrentBet(game.currentBet);
-            std::cout << currentPlayer->getName() << " calls with " << amountToCall << " chips." << std::endl;
         } else if (action == "raise" || action == "r") {
             double raiseAmount = 0;
-            std::cout << "Enter raise amount: ";
             std::cin >> raiseAmount;
 
             while (std::cin.fail() || raiseAmount <= 0) {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Invalid raise amount. Please try again." << std::endl;
-                std::cout << "Enter raise amount: ";
                 std::cin >> raiseAmount;
             }
 
@@ -79,9 +66,7 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
             currentPlayer->setCurrentBet(totalBet);
             game.currentBet = totalBet;
 
-            std::cout << currentPlayer->getName() << " raises to " << game.currentBet << " chips." << std::endl;
         } else {
-            std::cout << "Invalid action. Please try again." << std::endl;
             handlePlayerAction(game, currentPlayer);
         }
     }
@@ -89,7 +74,6 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
 
 void executeBettingRound(PokerGame &game)
 {
-    std::cout << "=== Betting Round ===" << std::endl;
 
     Agent *currentPlayer =
       game.playerIsDealer ? static_cast<Agent *>(game.player.get()) : static_cast<Agent *>(game.bot.get());
@@ -102,8 +86,6 @@ void executeBettingRound(PokerGame &game)
     while (!bettingComplete) {
         if (currentPlayer->isActive()) {
             if (currentPlayer == game.player.get()) {
-                std::cout << currentPlayer->getName() << "'s turn. Current bet: " << game.currentBet
-                          << ", your chips: " << currentPlayer->getChips() << std::endl;
 
                 handlePlayerAction(game, currentPlayer);
             } else {

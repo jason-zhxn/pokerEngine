@@ -26,7 +26,6 @@ int main()
         auto end = std::chrono::high_resolution_clock::now();
         auto duration_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
-        std::cout << "Run " << i + 1 << ": " << duration_ns << " nanoseconds\n";
         tot += duration_ns;
     }
 
