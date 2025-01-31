@@ -30,7 +30,7 @@ void PokerGame::playGame()
             } else {
                 std::cout << "Villain: Leaving so soon? Bad manners if you ask me... PnL: " << pnl << " \n";
             }
-            exit(0);
+            return;
         }
 
         collectBlinds();
