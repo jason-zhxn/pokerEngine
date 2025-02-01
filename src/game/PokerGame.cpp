@@ -97,16 +97,13 @@ void PokerGame::shiftDealerButton()
 
 void PokerGame::dealHoleCards()
 {
-    player->setHand({ deck->popTop(), deck->popTop() });
-    bot->setHand({ deck->popTop(), deck->popTop() });
+    player->setHand(std::move(std::vector<Card>{ deck->popTop(), deck->popTop() }));
+    bot->setHand(std::move(std::vector<Card>{ deck->popTop(), deck->popTop() }));
 }
 
 void PokerGame::dealCommunityCards(int numCards)
 {
-    for (int i = 0; i < numCards; ++i) {
-        Card card = deck->popTop();
-        communityCards.push_back(card);
-    }
+    for (int i = 0; i < numCards; ++i) { communityCards.push_back(std::move(deck->popTop())); }
 }
 
 double PokerGame::getCurrentBet()
