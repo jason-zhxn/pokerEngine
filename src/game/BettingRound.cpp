@@ -3,6 +3,15 @@
 #include <limits>
 #include <string>
 
+double raiseHelper(double raiseAmount){
+    while (std::cin.fail() || raiseAmount <= 0) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin >> raiseAmount;
+    }
+    return raiseAmount;
+}
+
 void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
 {
     double amountToCall = game.currentBet - currentPlayer->getCurrentBet();
@@ -16,11 +25,7 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
             double raiseAmount = 0;
             std::cin >> raiseAmount;
 
-            while (std::cin.fail() || raiseAmount <= 0) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cin >> raiseAmount;
-            }
+            raiseAmount = raiseHelper(raiseAmount);
 
             double totalBet = game.currentBet + raiseAmount;
             if (totalBet > currentPlayer->getChips()) { totalBet = currentPlayer->getChips(); }
@@ -51,11 +56,7 @@ void handlePlayerAction(PokerGame &game, Agent *currentPlayer)
             double raiseAmount = 0;
             std::cin >> raiseAmount;
 
-            while (std::cin.fail() || raiseAmount <= 0) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cin >> raiseAmount;
-            }
+            raiseAmount = raiseHelper(raiseAmount);
 
             double totalBet = game.currentBet + raiseAmount;
             if (totalBet > currentPlayer->getChips()) { totalBet = currentPlayer->getChips(); }

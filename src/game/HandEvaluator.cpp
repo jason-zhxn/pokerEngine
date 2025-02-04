@@ -67,7 +67,7 @@ std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const 
     }
     std::vector<Card> fullHand = hand;
     fullHand.insert(fullHand.end(), communityCards.begin(), communityCards.end());
-    return fullHand;
+    return std::move(fullHand);
 }
 
 bool HandEvaluator::isFlush(const std::vector<Card> &allCards, char &flushSuit)
