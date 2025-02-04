@@ -8,8 +8,8 @@
 
 Deck::Deck()
 {
-    const std::vector<std::string> suits = { "Hearts", "Diamonds", "Clubs", "Spades" };
-    const std::vector<std::string> ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+    const std::vector<char> suits = { 'H', 'D', 'C', 'S' };
+    const std::vector<char> ranks = { '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K', 'A' };
     for (const auto &suit : suits) {
         for (const auto &rank : ranks) { cards.emplace_back(Card(rank, suit)); }
     }

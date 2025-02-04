@@ -10,9 +10,9 @@ using cardVec = std::vector<Card>;
 TEST(HandEvaluatorTest, RoyalFlush)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("T", "Hearts"), Card("J", "Hearts") };
+    cardVec hand = { Card('T', 'H'), Card('J', 'H') };
     cardVec communityCards = {
-        Card("Q", "Hearts"), Card("K", "Hearts"), Card("A", "Hearts"), Card("4", "Spades"), Card("9", "Hearts")
+        Card('Q', 'H'), Card('K', 'H'), Card('A', 'H'), Card('4', 'S'), Card('9', 'H')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -25,9 +25,9 @@ TEST(HandEvaluatorTest, RoyalFlush)
 TEST(HandEvaluatorTest, StraightFlush)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("9", "Clubs"), Card("T", "Clubs") };
+    cardVec hand = { Card('9', 'C'), Card('T', 'C') };
     cardVec communityCards = {
-        Card("J", "Clubs"), Card("Q", "Clubs"), Card("K", "Clubs"), Card("2", "Hearts"), Card("3", "Hearts")
+        Card('J', 'C'), Card('Q', 'C'), Card('K', 'C'), Card('2', 'H'), Card('3', 'H')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -41,11 +41,11 @@ TEST(HandEvaluatorTest, QuadsOverQuads)
 {
     HandEvaluator evaluator;
     // Hand 1 is Quad 9's
-    cardVec hand1 = { Card("9", "Clubs"), Card("9", "Diamonds") };
+    cardVec hand1 = { Card('9', 'C'), Card('9', 'D') };
     // Hand 2 is Quad 10's
-    cardVec hand2 = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    cardVec hand2 = { Card('T', 'C'), Card('T', 'D') };
     cardVec communityCards = {
-        Card("9", "Hearts"), Card("9", "Spades"), Card("10", "Hearts"), Card("10", "Spades"), Card("2", "Hearts")
+        Card('9', 'H'), Card('9', 'S'), Card('T', 'H'), Card('T', 'S'), Card('2', 'H')
     };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
@@ -63,9 +63,9 @@ TEST(HandEvaluatorTest, QuadsOverQuads)
 TEST(HandEvaluatorTest, Quads)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("9", "Clubs"), Card("9", "Diamonds") };
+    cardVec hand = { Card('9', 'C'), Card('9', 'D') };
     cardVec communityCards = {
-        Card("9", "Hearts"), Card("9", "Spades"), Card("K", "Clubs"), Card("4", "Hearts"), Card("6", "Diamonds")
+        Card('9', 'H'), Card('9', 'S'), Card('K', 'C'), Card('4', 'H'), Card('6', 'D')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -80,9 +80,9 @@ TEST(HandEvaluatorTest, Quads)
 TEST(HandEvaluatorTest, FullHouse)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
+    cardVec hand = { Card('T', 'C'), Card('T', 'D') };
     cardVec communityCards = {
-        Card("T", "Hearts"), Card("J", "Spades"), Card("J", "Clubs"), Card("4", "Hearts"), Card("9", "Diamonds")
+        Card('T', 'H'), Card('J', 'S'), Card('J', 'C'), Card('4', 'H'), Card('9', 'D')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -97,9 +97,9 @@ TEST(HandEvaluatorTest, FullHouse)
 TEST(HandEvaluatorTest, Flush)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("2", "Hearts"), Card("5", "Hearts") };
+    cardVec hand = { Card('2', 'H'), Card('5', 'H') };
     cardVec communityCards = {
-        Card("9", "Hearts"), Card("J", "Hearts"), Card("K", "Hearts"), Card("3", "Diamonds"), Card("8", "Spades")
+        Card('9', 'H'), Card('J', 'H'), Card('K', 'H'), Card('3', 'D'), Card('8', 'S')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -118,9 +118,9 @@ TEST(HandEvaluatorTest, Flush)
 TEST(HandEvaluatorTest, Straight)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("2", "Diamonds"), Card("3", "Clubs") };
+    cardVec hand = { Card('2', 'D'), Card('3', 'C') };
     cardVec communityCards = {
-        Card("4", "Hearts"), Card("5", "Spades"), Card("6", "Clubs"), Card("K", "Hearts"), Card("7", "Diamonds")
+        Card('4', 'H'), Card('5', 'S'), Card('6', 'C'), Card('K', 'H'), Card('7', 'D')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -133,9 +133,9 @@ TEST(HandEvaluatorTest, Straight)
 TEST(HandEvaluatorTest, AceHighStraight)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("A", "Diamonds"), Card("2", "Clubs") };
+    cardVec hand = { Card('A', 'D'), Card('2', 'C') };
     cardVec communityCards = {
-        Card("K", "Hearts"), Card("Q", "Spades"), Card("10", "Clubs"), Card("3", "Hearts"), Card("J", "Diamonds")
+        Card('K', 'H'), Card('Q', 'S'), Card('T', 'C'), Card('3', 'H'), Card('J', 'D')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -148,9 +148,9 @@ TEST(HandEvaluatorTest, AceHighStraight)
 TEST(HandEvaluatorTest, AceLowStraight)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("2", "Diamonds"), Card("A", "Clubs") };
+    cardVec hand = { Card('2', 'D'), Card('A', 'C') };
     cardVec communityCards = {
-        Card("4", "Hearts"), Card("5", "Spades"), Card("3", "Clubs"), Card("K", "Hearts"), Card("7", "Diamonds")
+        Card('4', 'H'), Card('5', 'S'), Card('3', 'C'), Card('K', 'H'), Card('7', 'D')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -163,8 +163,8 @@ TEST(HandEvaluatorTest, AceLowStraight)
 TEST(HandEvaluatorTest, ThreeOfAKind)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
-    cardVec communityCards = { Card("T", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card('T', 'C'), Card('T', 'D') };
+    cardVec communityCards = { Card('T', 'H'), Card('J', 'S'), Card('K', 'C') };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::THREE_OF_A_KIND);
@@ -176,8 +176,8 @@ TEST(HandEvaluatorTest, ThreeOfAKind)
 TEST(HandEvaluatorTest, TwoPair)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("T", "Clubs"), Card("T", "Diamonds") };
-    cardVec communityCards = { Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card('T', 'C'), Card('T', 'D') };
+    cardVec communityCards = { Card('J', 'H'), Card('J', 'S'), Card('K', 'C') };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::TWO_PAIR);
@@ -189,9 +189,9 @@ TEST(HandEvaluatorTest, TwoPair)
 TEST(HandEvaluatorTest, TwoPairCounterfeited)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
+    cardVec hand = { Card('T', 'C'), Card('T', 'D') };
     cardVec communityCards = {
-        Card("J", "Hearts"), Card("J", "Spades"), Card("K", "Clubs"), Card("K", "Hearts"), Card("8", "Clubs")
+        Card('J', 'H'), Card('J', 'S'), Card('K', 'C'), Card('K', 'H'), Card('8', 'C')
     };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
@@ -204,8 +204,8 @@ TEST(HandEvaluatorTest, TwoPairCounterfeited)
 TEST(HandEvaluatorTest, OnePair)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("10", "Clubs"), Card("10", "Diamonds") };
-    cardVec communityCards = { Card("J", "Hearts"), Card("Q", "Spades"), Card("K", "Clubs") };
+    cardVec hand = { Card('T', 'C'), Card('T', 'D') };
+    cardVec communityCards = { Card('J', 'H'), Card('Q', 'S'), Card('K', 'C') };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::ONE_PAIR);
@@ -218,8 +218,8 @@ TEST(HandEvaluatorTest, OnePair)
 TEST(HandEvaluatorTest, HighCard)
 {
     HandEvaluator evaluator;
-    cardVec hand = { Card("2", "Diamonds"), Card("5", "Clubs") };
-    cardVec communityCards = { Card("7", "Hearts"), Card("9", "Spades"), Card("J", "Clubs") };
+    cardVec hand = { Card('2', 'D'), Card('5', 'C') };
+    cardVec communityCards = { Card('7', 'H'), Card('9', 'S'), Card('J', 'C') };
 
     auto result = evaluator.evaluateHand(hand, communityCards);
     EXPECT_EQ(result.rank, HandEvaluator::HIGH_CARD);
@@ -238,14 +238,14 @@ TEST(HandEvaluatorTest, TwoPairsWithDifferentKickers)
     HandEvaluator evaluator;
 
     cardVec communityCards = {
-        Card("K", "Hearts"), Card("7", "Diamonds"), Card("3", "Clubs"), Card("3", "Spades"), Card("2", "Hearts")
+        Card('K', 'H'), Card('7', 'D'), Card('3', 'C'), Card('3', 'S'), Card('2', 'H')
     };
 
     // Ace Kicker
-    cardVec hand1 = { Card("K", "Diamonds"), Card("A", "Clubs") };
+    cardVec hand1 = { Card('K', 'D'), Card('A', 'C') };
 
     // Queen Kicker
-    cardVec hand2 = { Card("K", "Clubs"), Card("Q", "Spades") };
+    cardVec hand2 = { Card('K', 'C'), Card('Q', 'S') };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
     auto result2 = evaluator.evaluateHand(hand2, communityCards);
@@ -261,14 +261,14 @@ TEST(HandEvaluatorTest, FullHouseTripsTiebreaker)
     HandEvaluator evaluator;
 
     cardVec communityCards = {
-        Card("Q", "Clubs"), Card("J", "Spades"), Card("J", "Diamonds"), Card("4", "Hearts"), Card("2", "Clubs")
+        Card('Q', 'C'), Card('J', 'S'), Card('J', 'D'), Card('4', 'H'), Card('2', 'C')
     };
 
     // Queens over Jacks
-    cardVec hand1 = { Card("Q", "Hearts"), Card("Q", "Diamonds") };
+    cardVec hand1 = { Card('Q', 'H'), Card('Q', 'D') };
 
     // Jacks over Queens
-    cardVec hand2 = { Card("J", "Clubs"), Card("Q", "Diamonds") };
+    cardVec hand2 = { Card('J', 'C'), Card('Q', 'D') };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
     auto result2 = evaluator.evaluateHand(hand2, communityCards);
@@ -284,14 +284,14 @@ TEST(HandEvaluatorTest, FullHousePairTiebreaker)
     HandEvaluator evaluator;
 
     cardVec communityCards = {
-        Card("Q", "Clubs"), Card("Q", "Spades"), Card("9", "Diamonds"), Card("7", "Hearts"), Card("2", "Clubs")
+        Card('Q', 'C'), Card('Q', 'S'), Card('9', 'D'), Card('7', 'H'), Card('2', 'C')
     };
 
     // Queens over Nines
-    cardVec hand1 = { Card("9", "Hearts"), Card("Q", "Diamonds") };
+    cardVec hand1 = { Card('9', 'H'), Card('Q', 'D') };
 
     // Queens over Sevens
-    cardVec hand2 = { Card("Q", "Hearts"), Card("7", "Spades") };
+    cardVec hand2 = { Card('Q', 'H'), Card('7', 'S') };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
     auto result2 = evaluator.evaluateHand(hand2, communityCards);
@@ -307,14 +307,14 @@ TEST(HandEvaluatorTest, FlushTiebreaker)
     HandEvaluator evaluator;
 
     cardVec communityCards = {
-        Card("A", "Hearts"), Card("K", "Hearts"), Card("7", "Hearts"), Card("6", "Diamonds"), Card("2", "Spades")
+        Card('A', 'H'), Card('K', 'H'), Card('7', 'H'), Card('6', 'D'), Card('2', 'S')
     };
 
     // Tiebreaker card is 4
-    cardVec hand1 = { Card("3", "Hearts"), Card("4", "Hearts") };
+    cardVec hand1 = { Card('3', 'H'), Card('4', 'H') };
 
     // Tiebreaker card is 5
-    cardVec hand2 = { Card("2", "Hearts"), Card("5", "Hearts") };
+    cardVec hand2 = { Card('2', 'H'), Card('5', 'H') };
 
     auto result1 = evaluator.evaluateHand(hand1, communityCards);
     auto result2 = evaluator.evaluateHand(hand2, communityCards);
