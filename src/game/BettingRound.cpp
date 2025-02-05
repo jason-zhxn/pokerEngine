@@ -3,7 +3,8 @@
 #include <limits>
 #include <string>
 
-double raiseHelper(double raiseAmount){
+double raiseHelper(double raiseAmount)
+{
     while (std::cin.fail() || raiseAmount <= 0) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
