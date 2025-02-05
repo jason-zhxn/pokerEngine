@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "poker-engine"
 version = "0.1.0"
-description = "Poker engine project"
-authors = ["Harry Guan <guanhuai2014@gmail.com"]
+description = "Poker Engine"
+authors = ["Harry Guan <hguan.dev@gmail.com"]
 
 [tool.poetry.dependencies]
 python = "^3.12" 
