@@ -24,7 +24,7 @@ TEST(PlayerTest, PlayerHand)
 {
     Player player("Harry", 100);
 
-    std::vector<Card> hand = { Card("J", "Spades"), Card("K", "Hearts") };
+    std::vector<Card> hand = { Card('J', 'S'), Card('K', 'H') };
 
     player.setHand(hand);
 

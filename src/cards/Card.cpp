@@ -1,35 +1,54 @@
 #include "Card.hpp"
 #include <stdexcept>
 
-Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suit(suit) {}
+Card::Card(const char &rank, const char &suit) : rank(rank), suit(suit) {}
 
-std::string Card::getRank() const
+char Card::getRank() const
 {
     return rank;
 }
-std::string Card::getSuit() const
+char Card::getSuit() const
 {
     return suit;
 }
 
 int Card::getValue() const
 {
-    if (rank == "A") return 14;
-    if (rank == "K") return 13;
-    if (rank == "Q") return 12;
-    if (rank == "J") return 11;
-    if (rank == "T") return 10;
 
-    try {
-        return std::stoi(rank);
-    } catch (const std::invalid_argument &) {
-        throw std::runtime_error("Invalid rank: " + rank);
+    switch (rank) {
+    case 'A':
+        return 14;
+    case 'K':
+        return 13;
+    case 'Q':
+        return 12;
+    case 'J':
+        return 11;
+    case 'T':
+        return 10;
+    default:
+        break;
     }
+
+    return rank - '0';
 }
 
 std::string Card::toString() const
 {
-    return rank + " of " + suit;
+    std::string rank_str = "a";
+    rank_str[0] = rank;
+    switch (suit) {
+    case 'H':
+        return rank_str + " of Hearts";
+    case 'D':
+        return rank_str + " of Diamonds";
+    case 'S':
+        return rank_str + " of Spades";
+    case 'C':
+        return rank_str + " of Clubs";
+    }
+
+    return "Error. Invalid suit.\n";
 }
 
 bool Card::operator==(const Card &other) const

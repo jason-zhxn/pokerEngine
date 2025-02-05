@@ -67,12 +67,12 @@ std::vector<Card> HandEvaluator::mergeHand(const std::vector<Card> &hand, const 
     }
     std::vector<Card> fullHand = hand;
     fullHand.insert(fullHand.end(), communityCards.begin(), communityCards.end());
-    return fullHand;
+    return std::move(fullHand);
 }
 
-bool HandEvaluator::isFlush(const std::vector<Card> &allCards, std::string &flushSuit)
+bool HandEvaluator::isFlush(const std::vector<Card> &allCards, char &flushSuit)
 {
-    std::map<std::string, int> suitCount;
+    std::map<char, int> suitCount;
     for (const auto &card : allCards) {
         suitCount[card.getSuit()]++;
         if (suitCount[card.getSuit()] >= 5) {
@@ -108,7 +108,7 @@ HandEvaluator::HandResult HandEvaluator::determineBestHand(const std::vector<Car
 {
     HandResult result;
 
-    std::string flushSuit;
+    char flushSuit;
     bool hasFlush = isFlush(allCards, flushSuit);
 
     std::vector<int> ranks;

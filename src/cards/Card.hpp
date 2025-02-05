@@ -5,9 +5,9 @@
 class Card
 {
   public:
-    Card(const std::string &rank, const std::string &suit);
-    std::string getRank() const;
-    std::string getSuit() const;
+    Card(const char &rank, const char &suit);
+    char getRank() const;
+    char getSuit() const;
     int getValue() const;
     std::string toString() const;
 
@@ -15,6 +15,6 @@ class Card
     bool operator!=(const Card &other) const;
 
   private:
-    std::string rank;
-    std::string suit;
+    char rank;
+    char suit;
 };

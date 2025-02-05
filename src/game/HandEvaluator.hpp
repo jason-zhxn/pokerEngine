@@ -42,7 +42,7 @@ class HandEvaluator
   private:
     std::vector<Card> mergeHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards);
 
-    bool isFlush(const std::vector<Card> &allCards, std::string &flushSuit);
+    bool isFlush(const std::vector<Card> &allCards, char &flushSuit);
 
     bool isStraight(const std::vector<int> &ranks, int &highCard);
 
