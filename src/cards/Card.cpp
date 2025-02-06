@@ -32,6 +32,12 @@ std::string Card::toString() const
     return rank + " of " + suit;
 }
 
+int Card::getHash() const
+{
+    int rankValue = getValue();
+    return ((rankValue - 2) << 2) + (suit == "H" ? 0 : suit == "D" ? 1 : suit == "C" ? 2 : 3);
+}
+
 bool Card::operator==(const Card &other) const
 {
     return rank == other.rank && suit == other.suit;
