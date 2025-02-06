@@ -20,6 +20,9 @@ TEST(HandEvaluatorTest, RoyalFlush)
 
     EXPECT_EQ(result.rank, HandEvaluator::ROYAL_FLUSH);
     EXPECT_EQ(result.identifier[0], 14);
+    
+    std::string fast_result = evaluator.fastEvaluateHand(hand, communityCards);
+    EXPECT_EQ(fast_result, "Royal Flush");
 }
 
 TEST(HandEvaluatorTest, StraightFlush)
@@ -35,6 +38,9 @@ TEST(HandEvaluatorTest, StraightFlush)
 
     EXPECT_EQ(result.rank, HandEvaluator::STRAIGHT_FLUSH);
     EXPECT_EQ(result.identifier[0], 13);
+
+    std::string fast_result = evaluator.fastEvaluateHand(hand, communityCards);
+    EXPECT_EQ(fast_result, "King-High Straight Flush");
 }
 
 TEST(HandEvaluatorTest, QuadsOverQuads)

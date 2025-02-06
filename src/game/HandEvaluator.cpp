@@ -245,7 +245,6 @@ HandEvaluator::HandResult HandEvaluator::determineBestHand(const std::vector<Car
 std::string HandEvaluator::fastEvaluateHand(const std::vector<Card> &hand, const std::vector<Card> &communityCards)
 {
     std::vector<Card> fullHand = mergeHand(hand, communityCards);
-    // return determineBestHand(fullHand);
     int cards[7] = { 0 };
     int suit_hash = 0;
     for (int i = 0; i < 7; i++) {
@@ -257,7 +256,7 @@ std::string HandEvaluator::fastEvaluateHand(const std::vector<Card> &hand, const
         int suit_binary[4] = { 0 };
 
         for (int i = 0; i < 7; i++) { suit_binary[cards[i] & 0x3] |= (1 << (cards[i] / 4)); }
-        return RANK_DESCRIPTION[FLUSH_TABLE[suit_binary[SUITS_TABLE[suit_hash] - 1]]][0];
+        return RANK_DESCRIPTION[FLUSH_TABLE[suit_binary[SUITS_TABLE[suit_hash] - 1]]][1];
     }
 
     unsigned char quinary[13] = { 0 };
@@ -266,7 +265,7 @@ std::string HandEvaluator::fastEvaluateHand(const std::vector<Card> &hand, const
 
     const int hash = hashQuinaryResult(quinary);
 
-    return RANK_DESCRIPTION[NOFLUSH_TABLE[hash]][0];
+    return RANK_DESCRIPTION[NOFLUSH_TABLE[hash]][1];
 }
 
 int HandEvaluator::hashQuinaryResult(const unsigned char quinary[])

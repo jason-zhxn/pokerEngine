@@ -2,7 +2,7 @@
 
 #include <string>
 
-std::string RANK_DESCRIPTION[7463][2] = {
+const std::string RANK_DESCRIPTION[7463][2] = {
     { "", "" },
     { "AKQJT", "Royal Flush" },
     { "KQJT9", "King-High Straight Flush" },
