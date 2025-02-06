@@ -10,6 +10,7 @@ class Card
     char getSuit() const;
     int getValue() const;
     std::string toString() const;
+    int getHash() const;
 
     bool operator==(const Card &other) const;
     bool operator!=(const Card &other) const;
