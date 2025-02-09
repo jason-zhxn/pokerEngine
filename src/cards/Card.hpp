@@ -17,5 +17,5 @@ class Card
 
   private:
     std::string rank;
-    std::string suit;
+    std::string suitStr;
 };

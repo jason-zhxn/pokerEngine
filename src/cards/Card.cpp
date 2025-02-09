@@ -1,7 +1,8 @@
 #include "Card.hpp"
 #include <stdexcept>
+#include <string>
 
-Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suit(suit) {}
+Card::Card(const std::string &rank, const std::string &suit) : rank(rank), suitStr(suit) {}
 
 std::string Card::getRank() const
 {
@@ -9,7 +10,7 @@ std::string Card::getRank() const
 }
 std::string Card::getSuit() const
 {
-    return suit;
+    return suitStr;
 }
 
 int Card::getValue() const
@@ -29,18 +30,18 @@ int Card::getValue() const
 
 std::string Card::toString() const
 {
-    return rank + " of " + suit;
+    return rank + " of " + suitStr;
 }
 
 int Card::getHash() const
 {
     int rankValue = getValue();
-    return ((rankValue - 2) << 2) + (suit == "H" ? 0 : suit == "D" ? 1 : suit == "C" ? 2 : 3);
+    return ((rankValue - 2) << 2) + (suitStr == "H" ? 0 : suitStr == "D" ? 1 : suitStr == "C" ? 2 : 3);
 }
 
 bool Card::operator==(const Card &other) const
 {
-    return rank == other.rank && suit == other.suit;
+    return rank == other.rank && suitStr == other.suitStr;
 }
 
 bool Card::operator!=(const Card &other) const
