@@ -32,3 +32,11 @@ TEST(PlayerTest, PlayerHand)
     EXPECT_EQ(player.getHand()[0].toString(), "J of Spades");
     EXPECT_EQ(player.getHand()[1].toString(), "K of Hearts");
 }
+
+TEST(PlayerTest, CarolineInitialization)
+{
+    Player caroline("Caroline", 250);
+    EXPECT_EQ(caroline.getName(), "Caroline");
+    EXPECT_EQ(caroline.getChips(), 250);
+    EXPECT_TRUE(caroline.isActive());
+}

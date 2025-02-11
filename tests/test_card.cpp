@@ -40,3 +40,19 @@ TEST(CardTest, InequalityOperator)
     Card card2("J", "Hearts");
     EXPECT_TRUE(card1 != card2);
 }
+
+TEST(CardTest, LowerBound)
+{
+    Card card("2", "Hearts");
+    EXPECT_EQ(card.getRank(), "2");
+    EXPECT_EQ(card.getSuit(), "Hearts");
+    EXPECT_EQ(card.getValue(), 2);
+}
+
+TEST(CardTest, JackValue)
+{
+    Card card("J", "Clubs");
+    EXPECT_EQ(card.getValue(), 11);
+    EXPECT_EQ(card.getRank(), "J");
+    EXPECT_EQ(card.getSuit(), "Clubs");
+}
